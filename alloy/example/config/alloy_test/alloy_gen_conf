@@ -1,0 +1,21 @@
+otelcol.receiver.otlp "default" {
+	grpc { }
+
+	http { }
+
+	output {
+		logs   = [otelcol.processor.batch.default.input]
+		traces = [otelcol.processor.batch.default.input]
+	}
+}
+
+otelcol.processor.batch "default" {
+	output {
+		logs   = [otelcol.exporter.debug.default.input]
+		traces = [otelcol.exporter.debug.default.input]
+	}
+}
+
+otelcol.exporter.debug "default" {
+	verbosity = "Detailed"
+}

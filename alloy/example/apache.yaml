@@ -1,0 +1,21 @@
+services:
+  apache:
+    image: serversideup/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    restart: on-failure
+    container_name: apache
+    volumes:
+    - ./web/hello/:/var/www/html/public
+    - ./config/web/apache/http.conf:/etc/apache2/vhost-templates/http.conf
+    ports:
+    - "8080:8080"
+    - "9000:9000" # move to seperate network 
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/healthcheck" ]
+      interval: 1s
+      start_period: 10s
+      timeout: 10s
+      retries: 5
+    env_file:
+    - path: ~/.grafana_dev_datasources
+      required: false
+    #dockerdocker run -v /home/user-debian/alloy_test/alloy/example/web/hello:/var/www/html/public  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/status.conf:/etc/apache2/conf-available/status.conf  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/http.conf:/etc/apache2/vhost-templates/http.conf -p 8080:8080  --name web -d   serversideup/php:8.4-fpm-apache

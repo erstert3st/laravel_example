@@ -1,0 +1,42 @@
+services:
+#https://github.com/hipages/php-fpm_exporter
+  phpfpmexporter:
+    image: hipages/php-fpm_exporter
+    container_name: phpfpmexporter
+    environment:
+      - PHP_FPM_SCRAPE_URI=tcp://apache:9000/status
+      # - PHP_FPM_LOG_LEVEL= "info"
+      - PHP_FPM_LOG_LEVEL=debug
+    ports:
+      - "9253:9253"
+      # - "9250:9250"
+    depends_on:
+      - apache
+
+  apacheexporter:
+    image: bitnami/apache-exporter:latest
+    container_name: apacheexporter
+    # environment:
+      # - APACHE_STATUS_URL=http://apache:8080/server-status?auto
+      # - SCRAPE_URI=http://apache:8080/server-status?auto
+    ports:
+      - "9117:9117"
+    command:
+      - --scrape_uri=http://apache:8080/server-status?auto
+    depends_on:
+      - apache
+
+  mysqldexporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqldexporter
+    restart: unless-stopped
+    ports:
+      - "9104:9104"
+    volumes:
+      - ./config/mysql_exporter/.my.cnf:/.my.cnf
+    environment:
+      - MYSQLD_EXPORTER_PASSWORD=XXXXXXXX
+    depends_on:
+      - mariadb
+
+#dockerdocker run -v /home/user-debian/alloy_test/alloy/example/web/hello:/var/www/html/public  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/status.conf:/etc/apache2/conf-available/status.conf  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/http.conf:/etc/apache2/vhost-templates/http.conf -p 8080:8080  --name web -d   serversideup/php:8.4-fpm-apache

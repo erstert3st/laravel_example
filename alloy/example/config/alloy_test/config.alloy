@@ -1,0 +1,27 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+
+exporters:
+  alloy:
+    api_key: "<DEIN_ALLOY_API_KEY>"
+    endpoint: "https://api.alloy.datacat.io"
+    compression: "on"
+    tls:
+      insecure: false
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [alloy]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [alloy]
