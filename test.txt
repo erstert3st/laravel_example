@@ -1,0 +1,7 @@
+http://grafana.coding-freaks.com:3000/a/grafana-lokiexplore-app/explore/service_name/apache/label/filename?patterns=%5B%5D&from=now-15m&to=now&var-ds=eejz550tzhs74c&var-filters=service_name%7C%3D%7Capache&var-fields=&var-levels=&var-metadata=&var-patterns=&var-lineFilterV2=&var-lineFilters=&urlColumns=%5B%5D&visualizationType=%22logs%22&displayedFields=%5B%5D&var-labelBy=filename&timezone=browser&var-all-fields=
+/var/log/apache2/modsec_audit.log
+/var/log/apache2/modsec_audit.log
+
+
+topk(10, sum by (audit_data_action_message)
+(count_over_time({filename="/var/log/apache2/modsec_audit.log"} | json [$__interval])))
