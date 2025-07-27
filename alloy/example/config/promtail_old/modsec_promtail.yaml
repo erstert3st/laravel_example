@@ -1,0 +1,33 @@
+#formated with ai xP
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://localhost:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: modsec
+    pipeline_stages:
+      - tenant:
+          value: sysmid-sensitive
+      - json:
+          expressions:
+            request: "transaction"
+      - json:
+          expressions:
+            headers: "request"
+      - json:
+          expressions:
+            Host: "headers"
+      - labels:
+          Host:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: modsec
+          __path__: /var/log/httpd/modsec_audit.log

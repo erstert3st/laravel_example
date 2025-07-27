@@ -5,47 +5,6 @@ logging {
 	// Forward internal logs to the local Loki instance.
 	write_to = [loki.process.example.receiver]
 }
-// Modsecurity logs
-loki.source.file "modsecurity_logs" {
-  targets = [
-    { __path__ = "/var/log/modsec/modsec_audit.log",
-	 job = "modsec" },
-  ]
-  forward_to = [loki.process.modsecurity_logs.receiver]
-}
-
-loki.process "modsecurity_logs" {
-  forward_to = [loki.write.default.receiver]
-
-	stage.tenant {
-		value = "sysmid-sensitive"
-	}
-
-	stage.json {
-		expressions = {
-			request = "transaction",
-		}
-	}
-
-	stage.json {
-		expressions = {
-			headers = "request",
-		}
-	}
-
-	stage.json {
-		expressions = {
-			Host = "headers",
-		}
-	}
-
-	stage.labels {
-		values = {
-			Host = null,
-		}
-	}
-}
-// Modsecurity logs end 
 
 loki.process "example" {
    forward_to = [loki.relabel.alloy_logs.receiver]
@@ -69,7 +28,7 @@ loki.relabel "alloy_logs"{
 		replacement = "integrations/self"
 	}
 
-	forward_to = [loki.write.default.receiver]
+	forward_to = [loki.write.loki.receiver]
 }
 
 tracing {
@@ -127,7 +86,7 @@ prometheus.remote_write "mimir" {
 	}
 }
 
-loki.write "default" {
+loki.write "loki" {
 	endpoint {
 		url = string.format(
 			"http://%s/loki/api/v1/push",
@@ -174,7 +133,7 @@ otelcol.receiver.otlp "default" {
 //    replacement  = "app/laravel"
 //  }
 //
-//  forward_to = [loki.write.default.receiver]
+//  forward_to = [loki.write.loki.receiver]
 //}
 
 

@@ -25,3 +25,6 @@ MODSEC_AUDIT_LOG_FORMAT=JSON
 MODSEC_AUDIT_LOG_PARTS=ABIJDEFHZ
 MODSEC_AUDIT_LOG_RELEVANT_STATUS='^(?:5|4(?!04))'
 MODSEC_AUDIT_LOG_TYPE=Serial
+
+-> why use git when you have an blog oO wtf oldi
+https://blog.elhacker.net/2023/12/tutorial-apache-modsecurity-waf.html

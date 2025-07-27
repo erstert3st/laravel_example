@@ -1,6 +1,7 @@
 services:
   grafana:
     image: grafana/grafana:12.0.0
+    container_name: grafana
     restart: on-failure
     command:
       - --config=/etc/grafana-config/grafana.ini
@@ -49,6 +50,7 @@ services:
   watch-dashboards:
     build: images/grizzly
     restart: on-failure
+    container_name: grafana-watch-dashboards
     depends_on:
       install-dashboard-dependencies:
         condition: service_completed_successfully
