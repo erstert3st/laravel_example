@@ -17,6 +17,12 @@ loki.source.file "modsecurity_logs" {
 loki.process "modsecurity_logs" {
   forward_to = [loki.write.default.receiver]
 
+	stage.static_labels {
+		values = {
+		job          = "modsec",
+		service_name = "modsec",
+		}
+	}
 	stage.tenant {
 		value = "sysmid-sensitive"
 	}
