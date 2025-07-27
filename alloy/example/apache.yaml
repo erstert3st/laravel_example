@@ -28,7 +28,24 @@ services:
       MODSEC_RULE_ENGINE: On              # Options: On | DetectionOnly | Off
       PARANOIA: 4                       
       TZ: "UTC"
+     #/var/log/modsec_audit.log  
+     #MODSEC_AUDIT_LOG: /usr/local/apache2/logs
+      MODSEC_AUDIT_LOG: /var/log/modsec_audit.log  
+      MODSEC_AUDIT_ENGINE: on
+    volumes:
+        - modsec-logs:/var/log
     ports:
       - "80:80"
+      - "81:8080"
     depends_on:
       - apache
+  testing:
+    image: nicolaka/netshoot:v0.13
+    container_name: testing
+    depends_on:
+      - modsecurity-waf
+    entrypoint: ["sleep", "infinity"]
+    volumes:
+      - modsec-logs:/testing/logs:ro
+volumes:
+  modsec-logs:

@@ -14,3 +14,14 @@ Keepsuit Laravel OpenTelemetry or  Spatie Laravel OpenTelemetry
 | Grafana Integration | Über Traces zu Tempo/Jaeger  | Metrics → Prometheus + Traces → Tempo |
 | Community & Support | Größer, etablierter          | Kleinere, aber wachsende Community    |
 | Perfekt für         | Schnelle Tracing-Integration | Vollständige Observability-Plattform  |
+
+
+
+-> notes waf
+
+MODSEC_AUDIT_ENGINE=RelevantOnly
+MODSEC_AUDIT_LOG=/dev/stdout
+MODSEC_AUDIT_LOG_FORMAT=JSON
+MODSEC_AUDIT_LOG_PARTS=ABIJDEFHZ
+MODSEC_AUDIT_LOG_RELEVANT_STATUS='^(?:5|4(?!04))'
+MODSEC_AUDIT_LOG_TYPE=Serial
