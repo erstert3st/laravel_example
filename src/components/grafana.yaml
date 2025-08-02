@@ -1,17 +1,20 @@
 services:
   grafana:
-    image: grafana/grafana:12.0.0
+    image: grafana/grafana:latest # ubuntu provising is broken Grafana v12.2.0-16636675413 (8729ea2dba) works
     container_name: grafana
     restart: on-failure
     command:
       - --config=/etc/grafana-config/grafana.ini
     volumes:
-      - ./config/grafana:/etc/grafana-config
+      - ./config/grafana/config:/etc/grafana-config
       - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
     develop:
       watch:
-        - path: ./config/grafana
-          action: sync+restart
+        - path: ./config/grafana/config
+          action: restart
+        # - path: ./config/grafana/
+        #   action: restart
     ports:
       - "3000:3000"
     healthcheck:
@@ -20,55 +23,55 @@ services:
       start_period: 5s
       timeout: 10s
       retries: 5
-    environment:
-      - GF_GIT_DASHBOARDS_ENABLED=true
-      - GF_GIT_DASHBOARDS_REPO_URL=https://github.com/erstert3st/laravel_example.git
-      - GF_GIT_DASHBOARDS_BRANCH=master
-      - GF_GIT_DASHBOARDS_PATH=dashboards
-      - GF_GIT_DASHBOARDS_USERNAME=erstert3st
+    # environment:
+      # - GF_GIT_DASHBOARDS_ENABLED=true
+      # - GF_GIT_DASHBOARDS_REPO_URL=https://github.com/erstert3st/laravel_example.git
+      # - GF_GIT_DASHBOARDS_BRANCH=master
+      # - GF_GIT_DASHBOARDS_PATH=dashboards
+      # - GF_GIT_DASHBOARDS_USERNAME=erstert3st
       #- GF_GIT_DASHBOARDS_TOKEN=youraccesstoken
       #- GF_GIT_DASHBOARDS_UPDATE_INTERVAL_SECONDS=300
 
-  install-dashboard-dependencies:
-    build: images/jb
-    restart: on-failure
-    depends_on:
-      grafana:
-        condition: service_healthy
-    volumes:
-      - ../operations/alloy-mixin:/etc/alloy-mixin
-    working_dir: /etc/alloy-mixin
-    command: jb install
+  # install-dashboard-dependencies:
+  #   build: images/jb
+  #   restart: on-failure
+  #   depends_on:
+  #     grafana:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ../operations/alloy-mixin:/etc/alloy-mixin
+  #   working_dir: /etc/alloy-mixin
+  #   command: jb install
 
-  # Provision alloy-mixin after Grafana is healthy and running.
-  provision-dashboards:
-    build: images/grizzly
-    restart: on-failure
-    depends_on:
-      install-dashboard-dependencies:
-        condition: service_completed_successfully
-    environment:
-      - GRAFANA_URL=http://grafana:3000
-    volumes:
-      - ../operations/alloy-mixin:/etc/alloy-mixin
-    working_dir: /etc/alloy-mixin
-    command: grr apply grizzly/dashboards.jsonnet
+  # # Provision alloy-mixin after Grafana is healthy and running.
+  # provision-dashboards:
+  #   build: images/grizzly
+  #   restart: on-failure
+  #   depends_on:
+  #     install-dashboard-dependencies:
+  #       condition: service_completed_successfully
+  #   environment:
+  #     - GRAFANA_URL=http://grafana:3000
+  #   volumes:
+  #     - ../operations/alloy-mixin:/etc/alloy-mixin
+  #   working_dir: /etc/alloy-mixin
+  #   command: grr apply grizzly/dashboards.jsonnet
 
-  # Watch dashboards for changes and apply them to Grafana.
-  watch-dashboards:
-    build: images/grizzly
-    restart: on-failure
-    container_name: grafana-watch-dashboards
-    depends_on:
-      install-dashboard-dependencies:
-        condition: service_completed_successfully
-    environment:
-      - GRAFANA_URL=http://grafana:3000
-      - MIMIR_ADDRESS=http://mimir:9009
-      - MIMIR_TENANT_ID=fake
-    volumes:
-      - ../operations/alloy-mixin:/etc/alloy-mixin
-    working_dir: /etc/alloy-mixin
-    command: grr watch . ./grizzly.jsonnet
+  # # Watch dashboards for changes and apply them to Grafana.
+  # watch-dashboards:
+  #   build: images/grizzly
+  #   restart: on-failure
+  #   container_name: grafana-watch-dashboards
+  #   depends_on:
+  #     install-dashboard-dependencies:
+  #       condition: service_completed_successfully
+  #   environment:
+  #     - GRAFANA_URL=http://grafana:3000
+  #     - MIMIR_ADDRESS=http://mimir:9009
+  #     - MIMIR_TENANT_ID=fake
+  #   volumes:
+  #     - ../operations/alloy-mixin:/etc/alloy-mixin
+  #   working_dir: /etc/alloy-mixin
+  #   command: grr watch . ./grizzly.jsonnet
 
 

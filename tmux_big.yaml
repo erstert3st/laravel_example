@@ -1,0 +1,26 @@
+session_name: laravel
+start_directory: /home/user1/Documents/gits/laravel_example
+windows:
+  - focus: 'true'
+    layout: 25b7,341x62,0,0[341x28,0,0{113x28,0,0,1,93x28,114,0,2,133x28,208,0,3},341x33,0,29{249x33,0,29[249x3,0,29,4,249x29,0,33,5],91x33,250,29,6}]
+    options: {}
+    panes:
+    - shell_command:
+        - zsh
+    - shell_command:
+        - fish
+    - shell_command:
+        - echo map.md | entr mca map.md --paging never
+    - shell_command:
+        - cd ./src/components
+        - docker compose down --remove-orphans --volumes || true
+        - echo "cleaned up docker starting new one"
+        - docker compose watch
+    - shell_command:
+        - git pull 
+        - cd ./src/components
+        - lazydocker
+    - shell_command:
+        - sudo -i
+      focus: true
+    window_name: Docker
