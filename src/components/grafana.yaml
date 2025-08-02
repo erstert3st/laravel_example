@@ -8,6 +8,10 @@ services:
     volumes:
       - ./config/grafana:/etc/grafana-config
       - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+    develop:
+      watch:
+        - path: ./config/grafana
+          action: sync+restart
     ports:
       - "3000:3000"
     healthcheck:
