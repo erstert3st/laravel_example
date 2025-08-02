@@ -17,12 +17,11 @@ services:
       timeout: 10s
       retries: 5
     environment:
-      - GF_FEATURE_TOGGLES_ENABLE=gitDashboards
       - GF_GIT_DASHBOARDS_ENABLED=true
       - GF_GIT_DASHBOARDS_REPO_URL=https://github.com/erstert3st/laravel_example.git
-      - GF_GIT_DASHBOARDS_BRANCH=main
+      - GF_GIT_DASHBOARDS_BRANCH=master
       - GF_GIT_DASHBOARDS_PATH=dashboards
-      - GF_GIT_DASHBOARDS_USERNAME=grafana
+      - GF_GIT_DASHBOARDS_USERNAME=erstert3st
       #- GF_GIT_DASHBOARDS_TOKEN=youraccesstoken
       #- GF_GIT_DASHBOARDS_UPDATE_INTERVAL_SECONDS=300
 
