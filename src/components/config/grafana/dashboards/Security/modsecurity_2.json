@@ -92,6 +92,7 @@
               "type": "loki",
               "uid": "P8E80F9AEF21F6940"
             },
+            "direction": "backward",
             "editorMode": "code",
             "expr": "topk(10, sum by (msg)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} \r\n|= \"Message: Warning.\"\r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \"\u003cline\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [severity \"\u003cseverity\u003e\"] [ver \"\u003cver\u003e\"] [tag \"\u003ctag\u003e\"]`\r\n[$__interval])))",
             "hide": false,
@@ -103,9 +104,10 @@
               "type": "loki",
               "uid": "P8E80F9AEF21F6940"
             },
+            "direction": "backward",
             "editorMode": "code",
             "expr": "topk(10, sum by (msg)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} \r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \u003cline\u003e] [level \u003clevel\u003e] [client \u003cclient\u003e] \u003c_\u003e [file \"\u003cfile2\u003e\"] [line \"\u003cline1\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [ver \"\u003cver\u003e\"] \u003ctag\u003e [hostname \"\u003chostname\u003e\"] [uri \"\u003curi\u003e\"] [unique_id \"\u003cunique_id\u003e\"]`\r\n[$__interval])))",
-            "hide": true,
+            "hide": false,
             "queryType": "range",
             "refId": "A"
           }
@@ -759,7 +761,8 @@
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "green"
+                  "color": "green",
+                  "value": 0
                 },
                 {
                   "color": "red",
@@ -882,10 +885,12 @@
             "showLegend": true
           },
           "tooltip": {
+            "hideZeros": false,
             "mode": "single",
             "sort": "none"
           }
         },
+        "pluginVersion": "12.2.0-16636675413",
         "targets": [
           {
             "datasource": {
@@ -1008,7 +1013,8 @@
               "mode": "percentage",
               "steps": [
                 {
-                  "color": "green"
+                  "color": "green",
+                  "value": 0
                 },
                 {
                   "color": "#6ED0E0",
@@ -1119,10 +1125,11 @@
             "id": "coords",
             "lat": 40.164528,
             "lon": -14.352344,
+            "noRepeat": false,
             "zoom": 1.97
           }
         },
-        "pluginVersion": "11.2.2",
+        "pluginVersion": "12.2.0-16636675413",
         "targets": [
           {
             "datasource": {
@@ -1206,10 +1213,12 @@
             "values": false
           },
           "tooltip": {
+            "hideZeros": false,
             "mode": "single",
             "sort": "none"
           }
         },
+        "pluginVersion": "12.2.0-16636675413",
         "targets": [
           {
             "datasource": {
@@ -1279,10 +1288,12 @@
             "values": false
           },
           "tooltip": {
+            "hideZeros": false,
             "mode": "single",
             "sort": "none"
           }
         },
+        "pluginVersion": "12.2.0-16636675413",
         "targets": [
           {
             "datasource": {
