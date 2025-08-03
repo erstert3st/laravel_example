@@ -68,6 +68,7 @@ services:
     volumes:
       - ./config/alloy:/etc/alloy
       - modsec-logs:/var/log/modsec # mount logs for alloy to push to db´s
+      - apache-logs:/var/log/apache2 # mount logs for alloy to push to db´s
 
 
 

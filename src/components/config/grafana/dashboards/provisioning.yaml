@@ -1,15 +1,24 @@
-apiVersion: 1
-providers:
-  - name: 'git-dashboards'
-    orgId: 1
-    type: file
-    disableDeletion: false
-    editable: true
 
-    # fullSync: true
-    #####debug ->
-    updateIntervalSeconds: 5
-    allowUiUpdates: true
-    options:
-      path: /etc/grafana/provisioning/dashboards
-      foldersFromFilesStructure: true
+    # ███╗   ██╗ ██████╗ ████████╗    ████████╗██╗  ██╗███████╗    ██╗   ██╗███████╗██╗     ██╗      ██████╗ ██╗    ██╗     ██████╗ ███████╗    ████████╗██╗  ██╗███████╗    ███████╗ ██████╗  ██████╗ 
+    # ████╗  ██║██╔═══██╗╚══██╔══╝    ╚══██╔══╝██║  ██║██╔════╝    ╚██╗ ██╔╝██╔════╝██║     ██║     ██╔═══██╗██║    ██║    ██╔═══██╗██╔════╝    ╚══██╔══╝██║  ██║██╔════╝    ██╔════╝██╔════╝ ██╔════╝ 
+    # ██╔██╗ ██║██║   ██║   ██║          ██║   ███████║█████╗       ╚████╔╝ █████╗  ██║     ██║     ██║   ██║██║ █╗ ██║    ██║   ██║█████╗         ██║   ███████║█████╗      █████╗  ██║  ███╗██║  ███╗
+    # ██║╚██╗██║██║   ██║   ██║          ██║   ██╔══██║██╔══╝        ╚██╔╝  ██╔══╝  ██║     ██║     ██║   ██║██║███╗██║    ██║   ██║██╔══╝         ██║   ██╔══██║██╔══╝      ██╔══╝  ██║   ██║██║   ██║
+    # ██║ ╚████║╚██████╔╝   ██║          ██║   ██║  ██║███████╗       ██║   ███████╗███████╗███████╗╚██████╔╝╚███╔███╔╝    ╚██████╔╝██║            ██║   ██║  ██║███████╗    ███████╗╚██████╔╝╚██████╔╝
+    # ╚═╝  ╚═══╝ ╚═════╝    ╚═╝          ╚═╝   ╚═╝  ╚═╝╚══════╝       ╚═╝   ╚══════╝╚══════╝╚══════╝ ╚═════╝  ╚══╝╚══╝      ╚═════╝ ╚═╝            ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚══════╝ ╚═════╝  ╚═════╝ 
+                                                                                                                                                                                                     
+#except for prod deployment, !
+# apiVersion: 1
+# providers:
+#   - name: 'git-dashboards'
+#     orgId: 1
+#     type: file
+#     disableDeletion: false
+#     editable: true
+
+#     # fullSync: true
+#     #####debug ->
+#     updateIntervalSeconds: 5
+#     allowUiUpdates: true
+#     options:
+#       path: /etc/grafana/provisioning/dashboards
+#       foldersFromFilesStructure: true

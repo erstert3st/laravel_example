@@ -11,13 +11,23 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 ## failToban
 - https://blog.elhacker.net/2024/09/mitigar-ataques-ddos-servidor-web-fail2ban-get-post.html
 - https://blog.elhacker.net/2014/05/instalar-y-configurar-fail2ban.html # oldAF
-## Todo
 
+## Todo SideQuests
+- [x] tmux recovery
+- [x] tmux IAC
+- [ ] Crowdsec
+- 
+
+## Todo
+- [ ] add autoload dashboard and dbs ->  cat get working for now on iac...
 - [x] grafana remove json shit
 - [x] learn and init provisioning
-- [x] tmux stuff
-- [ ] add autoload dashboard and dbs ->  cat get working for now on iac...
-- [ ] add failToBan
+- [] make all important things to volumes
+- [x] add failToBan
+- [ ] failToBan configure right
+- [ ] failToBan testing
+- [ ] failToBan dashboards
+- [ ] failToBan exporter | alloy
 - [ ] configure AbuseIpDB
 - [ ] add failToBan Dashboard
 - [ ] add Other Dashboard from weird Spanish dude

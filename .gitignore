@@ -56,3 +56,10 @@ yarn-error.log
 # file of the pair will detect a dirty work tree and detect the wrong tag name.
 **/.tag-only
 **/.image-tag
+/src/components/config/fail2ban/**/*.sqlite3
+/src/components/config/fail2ban/**/*.conf
+/src/components/config/fail2ban/**/*.log
+!/src/components/config/fail2ban/
+!/src/components/config/fail2ban/**/*.local
+!/src/components/config/fail2ban/**/*.md
+
