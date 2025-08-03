@@ -1,8 +1,13 @@
 name: alloy-main
-
+volumes:
+  apache-logs:
+  modsec-logs:
+  fail2ban-logs:
+  geoip:
 include:
   - ./grafana.yaml
   - ./databases.yaml
   - ./apache.yaml
   - ./exporter.yaml
+  - ./alloy.yaml
 

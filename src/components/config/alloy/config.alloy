@@ -1,28 +1,22 @@
-// todo add envs to services for k8s 
-logging {
-	level = "debug"
-
-	// Forward internal logs to the local Loki instance.
-	write_to = [loki.process.example.receiver]
-}
-// Modsecurity logs
+//------------------ Modsecurity logs -----------------------------------
 loki.source.file "modsecurity_logs" {
-  targets = [
-    { __path__ = "/var/log/modsec/modsec_audit.log",
-	 job = "modsec" },
-  ]
-  forward_to = [loki.process.modsecurity_logs.receiver]
+	targets = [
+		{__path__ = "/var/log/modsec/modsec_audit.log",
+			job      = "modsec"}, //dont touch this line!
+	]
+	forward_to = [loki.process.modsecurity_logs.receiver]
 }
 
 loki.process "modsecurity_logs" {
-  forward_to = [loki.write.default.receiver]
+	forward_to = [loki.write.default.receiver]
 
 	stage.static_labels {
 		values = {
-		job          = "modsec",
-		service_name = "modsec",
+			job          = "modsec",
+			service_name = "modsec",
 		}
 	}
+
 	stage.tenant {
 		value = "sysmid-sensitive"
 	}
@@ -51,28 +45,128 @@ loki.process "modsecurity_logs" {
 		}
 	}
 }
-// Modsecurity logs end 
+//------------------ Modsecurity logs end -----------------------------
+//
+//------------------ Fail2Ban logs -----------------------------------
 
-loki.process "example" {
-   forward_to = [loki.relabel.alloy_logs.receiver]
-
-      stage.labels {
-        values = {
-            version = string.format("Hello%s", "1.0.0"),
-        }
-    }
+loki.source.file "fail2ban" {
+	targets = [
+		{__path__ = "/var/log/fail2ban.log",
+				job = "fail2ban"},
+	]
+	forward_to = [loki.process.fail2ban.receiver]
 }
 
-loki.relabel "alloy_logs"{
+loki.process "fail2ban" {
+	forward_to = [loki.write.default.receiver]
 
+	stage.multiline {
+		firstline     = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
+		max_wait_time = "10s"
+	}
+
+	stage.regex {
+		expression = "^(?s)(?P<time>\\S+? \\S+?) (fail2ban\\.)(?P<component>\\S+)\\s* \\[(?P<pid>\\S+)\\]: (?P<priority>\\S+)\\s* (?P<message>.*?)$"
+	}
+
+	stage.timestamp {
+		source = "time"
+		format = "2006-01-02 15:04:05,000"
+	}
+
+	stage.labels {
+		values = {
+			component = null,
+			priority  = null,
+		}
+	}
+
+	stage.output {
+		source = "message"
+	}
+
+	stage.match {
+		selector = "{job=\"fail2ban\"} |~ \"\\\\\\\\[\\\\\\\\S+\\\\\\\\] .*\""
+
+		stage.regex {
+			expression = "(\\[(?P<jail>\\S+)\\] )?(?P<message>.*?)$"
+		}
+
+		stage.labels {
+			values = {
+				jail = null,
+			}
+		}
+
+		stage.output {
+			source = "message"
+		}
+	}
+
+	stage.regex {
+		expression = ".*?(?P<remote_addr>\\d+\\.\\d+\\.\\d+\\.\\d+).*"
+	}
+
+	stage.geoip {
+		db      = "/geoip/GeoLite2-City.mmdb"
+		source  = "remote_addr"
+		db_type = "city"
+	}
+
+	stage.labels {
+		values = {
+			geoip_city_name          = "",
+			geoip_country_name       = "",
+			geoip_country_code       = "",
+			geoip_continent_name     = "",
+			geoip_continent_code     = "",
+			geoip_location_latitude  = "",
+			geoip_location_longitude = "",
+			geoip_postal_code        = "",
+			geoip_timezone           = "",
+			geoip_subdivision_name   = "",
+			geoip_subdivision_code   = "",
+		}
+	}
+
+	stage.label_drop {
+		values = ["filename"]
+	}
+
+	stage.static_labels {
+		values = {
+			job          = "fail2ban",
+			service_name = "fail2ban",
+		}
+	}
+}
+// ----------------- internal logs -----------------------------------
+logging {
+	level    = "debug"
+	write_to = [loki.process.example.receiver]
+}
+
+loki.process "example" {
+	forward_to = [loki.relabel.alloy_logs.receiver]
+
+	stage.labels {
+		values = {
+			version = string.format("Hello%s", "1.0.0"),
+		}
+	}
+}
+// ----------------- internal logs end -----------------------------------
+
+// ----------------- Alloy logs -----------------------------------
+loki.relabel "alloy_logs" {
 	rule {
 		target_label = "instance"
-		replacement = string.format("version%s", "1.0.0")
+		replacement  = string.format("version%s", "1.0.0")
 	}
 
 	rule {
 		target_label = "job"
-		replacement = "integrations/self"
+		replacement  = "integrations/self"
 	}
 
 	forward_to = [loki.write.default.receiver]
@@ -86,9 +180,11 @@ tracing {
 	write_to = [otelcol.exporter.otlp.tempo.input]
 }
 
+// ----------------- scraper -----------------------------------
 // Collect metrics from the local running Alloy instance and forward to
 // Prometheus.
-prometheus.exporter.self "alloy" {}
+prometheus.exporter.self "alloy" { }
+
 prometheus.scrape "alloy" {
 	targets    = prometheus.exporter.self.alloy.targets
 	forward_to = [prometheus.remote_write.mimir.receiver]
@@ -97,32 +193,72 @@ prometheus.scrape "alloy" {
 // Collect profiles from the local running Alloy instance and forward to
 // Pyroscope.
 pyroscope.scrape "default" {
-  targets = [
-    {"__address__" = "localhost:12345", "service_name" = "alloy"},
-  ]
-  forward_to = [pyroscope.write.pyroscope.receiver]
+	targets = [
+		{"__address__" = "localhost:12345", "service_name" = "alloy"},
+	]
+	forward_to = [pyroscope.write.pyroscope.receiver]
 }
+
 prometheus.scrape "mysqldexporter" {
-  targets = [
-    { "__address__" = "mysqldexporter:9104", "job" = "mysql" },
-  ]
-  forward_to = [prometheus.remote_write.mimir.receiver]
+	targets = [
+		{"__address__" = "mysqldexporter:9104", "job" = "mysql"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
 }
 
 prometheus.scrape "apacheexporter" {
-  targets = [
-    { "__address__" = "apacheexporter:9117", "job" = "apache" },
-  ]
-  forward_to = [prometheus.remote_write.mimir.receiver]
+	targets = [
+		{"__address__" = "apacheexporter:9117", "job" = "apache"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
 }
 
 prometheus.scrape "phpfpmexporter" {
-  targets = [
-    { "__address__" = "phpfpmexporter:9253", "job" = "phpfpm" },
-  ]
-  forward_to = [prometheus.remote_write.mimir.receiver]
-  scrape_interval   = "15s"
+	targets = [
+		{"__address__" = "phpfpmexporter:9253", "job" = "phpfpm"},
+	]
+	forward_to      = [prometheus.remote_write.mimir.receiver]
+	scrape_interval = "15s"
 }
+// ----------------- scraper end -----------------------------------
+
+// ----------------- OpenTelemetry logs start -----------------------------------
+
+otelcol.receiver.otlp "default" {
+	grpc { }
+
+	http { }
+
+	output {
+		logs   = [otelcol.processor.batch.default.input]
+		traces = [otelcol.processor.batch.default.input]
+	}
+}
+
+otelcol.processor.batch "default" {
+	output {
+		logs   = [otelcol.exporter.debug.default.input]
+		traces = [otelcol.exporter.debug.default.input]
+	}
+}
+
+otelcol.exporter.debug "default" {
+	verbosity = "Detailed"
+}
+
+otelcol.exporter.otlp "tempo" {
+	client {
+		endpoint = coalesce(sys.env("TEMPO_HOST"), "localhost:4317")
+
+		tls {
+			insecure = true
+		}
+	}
+}
+
+// ----------------- OpenTelemetry logs end -----------------------------------
+
+// ----------------- Writer  start -----------------------------------
 
 prometheus.remote_write "mimir" {
 	endpoint {
@@ -142,33 +278,32 @@ loki.write "default" {
 	}
 }
 
-otelcol.receiver.otlp "default" {
-	grpc { }
-
-	http { }
-
-	output {
-		logs   = [otelcol.processor.batch.default.input]
-		traces = [otelcol.processor.batch.default.input]
+pyroscope.write "pyroscope" {
+	endpoint {
+		url = string.format(
+			"http://%s",
+			coalesce(sys.env("PYROSCOPE_HOST"), "localhost:4040"),
+		)
 	}
 }
 
+// ----------------- Writer end -----------------------------------
 
 //loki.process "laravel_logs" {
 //  forward_to = [loki.relabel.laravel_logs.receiver]
 
-  //stage.labels {
- //   values = {
+//stage.labels {
+//   values = {
 //      service_name = "laravel"
-  //  }
- // }
+//  }
+// }
 //}
 
 //loki.relabel "laravel_logs" {
-  //rule {
-    //target_label = "service_name"
-   // replacement  = "laravel"
- // }
+//rule {
+//target_label = "service_name"
+// replacement  = "laravel"
+// }
 
 //  rule {
 //    target_label = "instance"
@@ -182,33 +317,3 @@ otelcol.receiver.otlp "default" {
 //
 //  forward_to = [loki.write.default.receiver]
 //}
-
-
-otelcol.processor.batch "default" {
-	output {
-		logs   = [otelcol.exporter.debug.default.input]
-		traces = [otelcol.exporter.debug.default.input]
-	}
-}
-
-otelcol.exporter.debug "default" {
-	verbosity = "Detailed"
-}
-otelcol.exporter.otlp "tempo" {
-	client {
-		endpoint = coalesce(sys.env("TEMPO_HOST"), "localhost:4317")
-
-		tls {
-			insecure = true
-		}
-	}
-}
-
-pyroscope.write "pyroscope" {
-	endpoint {
-		url = string.format(
-			"http://%s",
-			coalesce(sys.env("PYROSCOPE_HOST"), "localhost:4040"),
-		)
-	}
-}

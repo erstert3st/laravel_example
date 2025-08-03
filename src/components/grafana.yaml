@@ -3,6 +3,10 @@ services:
     image: grafana/grafana:latest # ubuntu provising is broken Grafana v12.2.0-16636675413 (8729ea2dba) works
     container_name: grafana
     restart: on-failure
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=Etc/UTC
     command:
       - --config=/etc/grafana-config/grafana.ini
     volumes:
@@ -23,6 +27,15 @@ services:
       start_period: 5s
       timeout: 10s
       retries: 5
+
+  global-db:
+    image: observabilitystack/geoip-api:latest
+    container_name: global-db
+    restart: no
+    command: >
+      sh -c "cp -f /srv/GeoLite2-City.mmdb /share/ && exit 0"
+    volumes:
+      - geoip:/share
     # environment:
       # - GF_GIT_DASHBOARDS_ENABLED=true
       # - GF_GIT_DASHBOARDS_REPO_URL=https://github.com/erstert3st/laravel_example.git
@@ -73,5 +86,7 @@ services:
   #     - ../operations/alloy-mixin:/etc/alloy-mixin
   #   working_dir: /etc/alloy-mixin
   #   command: grr watch . ./grizzly.jsonnet
-
-
+  # Variable	Description	Default value
+  # CITY_DB_FILE	The location of the GeoIP2 City or GeoLite2 database file.	/srv/GeoLite2-City.mmdb
+  # ASN_DB_FILE	The location of the GeoIP2 ASN database file.	/srv/GeoLite2-ASN.mmdb
+  # ISP_DB_FILE	The location of the GeoIP2 ISP database file.	
