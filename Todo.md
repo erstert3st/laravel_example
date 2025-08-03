@@ -16,7 +16,7 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [x] tmux recovery
 - [x] tmux IAC
 - [ ] Crowdsec
-- 
+- second apache https://github.com/grafana/jsonnet-libs/tree/master/apache-http-mixin
 
 ## Todo
 - [ ] add autoload dashboard and dbs ->  cat get working for now on iac...

@@ -1,0 +1,1394 @@
+{
+  "apiVersion": "dashboard.grafana.app/v1beta1",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "fe38nnjd6chz4b0"
+  },
+  "spec": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations \u0026 Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Loki Promtail (not using JON ModSecurity audit log)",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 13,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 5,
+        "options": {
+          "displayMode": "lcd",
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": false
+          },
+          "maxVizHeight": 300,
+          "minVizHeight": 16,
+          "minVizWidth": 8,
+          "namePlacement": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showUnfilled": true,
+          "sizing": "auto",
+          "valueMode": "color"
+        },
+        "pluginVersion": "12.2.0-16636675413",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (msg)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n|= \"Message: Warning.\"\r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \"\u003cline\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [severity \"\u003cseverity\u003e\"] [ver \"\u003cver\u003e\"] [tag \"\u003ctag\u003e\"]`\r\n[$__interval])))",
+            "hide": false,
+            "queryType": "range",
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (msg)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \u003cline\u003e] [level \u003clevel\u003e] [client \u003cclient\u003e] \u003c_\u003e [file \"\u003cfile2\u003e\"] [line \"\u003cline1\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [ver \"\u003cver\u003e\"] \u003ctag\u003e [hostname \"\u003chostname\u003e\"] [uri \"\u003curi\u003e\"] [unique_id \"\u003cunique_id\u003e\"]`\r\n[$__interval])))",
+            "hide": true,
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "ModSecurity Rules",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "displayLabels": [
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": []
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.2.0-16636675413",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (uri)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n|= \"Apache-Error\"\r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \u003cline\u003e] [level \u003clevel\u003e] [client \u003cclient\u003e] \u003c_\u003e [file \"\u003cfile2\u003e\"] [line \"\u003cline1\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [ver \"\u003cver\u003e\"] \u003ctag\u003e [hostname \"\u003chostname\u003e\"] [uri \"\u003curi\u003e\"] [unique_id \"\u003cunique_id\u003e\"]`\r\n[$__interval])))",
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "ModSecurity URI",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "id": 4,
+        "options": {
+          "displayLabels": [
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.2.0-16636675413",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (file)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"}\r\n | pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \u003cline\u003e] [level \u003clevel\u003e] [client \u003cclient\u003e] \u003c_\u003e [file \"\u003cfile2\u003e\"] [line \"\u003cline1\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [ver \"\u003cver\u003e\"] \u003ctag\u003e [hostname \"\u003chostname\u003e\"] [uri \"\u003curi\u003e\"] [unique_id \"\u003cunique_id\u003e\"]`\r\n [$__interval])))",
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "ModSecurity Type Rules",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(Value.*)",
+              "renamePattern": "Desconocido"
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "byVariable": false,
+              "include": {
+                "names": [
+                  "Time",
+                  "/etc/httpd/modsecurity.d/activated_rules/REQUEST-921-PROTOCOL-ATTACK.conf",
+                  "/etc/httpd/modsecurity.d/activated_rules/REQUEST-930-APPLICATION-ATTACK-LFI.conf",
+                  "/etc/httpd/modsecurity.d/activated_rules/REQUEST-932-APPLICATION-ATTACK-RCE.conf",
+                  "/etc/httpd/modsecurity.d/activated_rules/REQUEST-933-APPLICATION-ATTACK-PHP.conf",
+                  "/etc/httpd/modsecurity.d/activated_rules/REQUEST-941-APPLICATION-ATTACK-XSS.conf",
+                  "/etc/httpd/modsecurity.d/activated_rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf",
+                  "/etc/httpd/modsecurity.d/activated_rules/REQUEST-949-BLOCKING-EVALUATION.conf",
+                  "/etc/httpd/modsecurity.d/activated_rules/RESPONSE-980-CORRELATION.conf",
+                  "apache2_util.c",
+                  "config.c",
+                  "core.c",
+                  "mod_access_compat.c",
+                  "mod_autoindex.c",
+                  "mod_cgid.c",
+                  "mod_rewrite.c",
+                  "/etc/httpd/modsecurity.d/activated_rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 16,
+          "w": 12,
+          "x": 0,
+          "y": 13
+        },
+        "id": 12,
+        "options": {
+          "displayMode": "lcd",
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": false
+          },
+          "maxVizHeight": 300,
+          "minVizHeight": 16,
+          "minVizWidth": 8,
+          "namePlacement": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "showUnfilled": true,
+          "sizing": "auto",
+          "valueMode": "color"
+        },
+        "pluginVersion": "12.2.0-16636675413",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (get)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n|= \"GET\"\r\n| pattern `GET \u003cget\u003e`\r\n [$__interval])))",
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "ModSecurity Requests",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 18
+        },
+        "id": 11,
+        "options": {
+          "displayLabels": [
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.2.0-16636675413",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (user_agent)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n|= \"User-Agent:\"\r\n| pattern `User-Agent: \u003cuser_agent\u003e`\r\n [$__interval])))",
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "ModSecurity attackers browsers",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 26
+        },
+        "id": 9,
+        "options": {
+          "displayLabels": [
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "value",
+              "percent"
+            ]
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "count"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.2.0-16636675413",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (Ipcountry)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n|= \"Cf-Ipcountry:\"\r\n| pattern `Cf-Ipcountry: \u003cIpcountry\u003e`\r\n [$__interval])))",
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "ModSecurity Countries",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(US.*)",
+              "renamePattern": "USA"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(BG.*)",
+              "renamePattern": "Bulgaria"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(SC.*)",
+              "renamePattern": "Seychelles"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(IN.*)",
+              "renamePattern": "India"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(SG.*)",
+              "renamePattern": "Singapure"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(IE.*)",
+              "renamePattern": "Ireland"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(RU.*)",
+              "renamePattern": "Russia"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(LT.*)",
+              "renamePattern": "Lithuania"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(CN.*)",
+              "renamePattern": "China"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(GL.*)",
+              "renamePattern": "Groenlandia"
+            }
+          },
+          {
+            "id": "renameByRegex",
+            "options": {
+              "regex": "(T1.*)",
+              "renamePattern": "Tor"
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 29
+        },
+        "id": 3,
+        "options": {
+          "displayLabels": [
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "value",
+              "percent"
+            ]
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "12.2.0-16636675413",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (client)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \u003cline\u003e] [level \u003clevel\u003e] [client \u003cclient\u003e] \u003c_\u003e [file \"\u003cfile2\u003e\"] [line \"\u003cline1\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [ver \"\u003cver\u003e\"] \u003ctag\u003e [hostname \"\u003chostname\u003e\"] [uri \"\u003curi\u003e\"] [unique_id \"\u003cunique_id\u003e\"]`\r\n [$__interval])))",
+            "hide": true,
+            "queryType": "range",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (ip)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n|= \"X-Forwarded-For:\"\r\n| pattern `X-Forwarded-For: \u003cip\u003e`\r\n [$__interval])))\r\n",
+            "hide": false,
+            "queryType": "range",
+            "refId": "B"
+          }
+        ],
+        "title": "ModSecurity IP's",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "description": "Rules Conf",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "barWidthFactor": 0.6,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "A"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "RCE"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "B"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "SQLi"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "C"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Protocol Enforcement"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "D"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Scanner Detection"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "E"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Blocking Evaluation"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "F"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Correlation"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "G"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "LFI"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "H"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "XSS"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 34
+        },
+        "id": 7,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `932\\d{3}`)[5m]))",
+            "queryType": "range",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `942\\d{3}`)[5m]))",
+            "hide": false,
+            "queryType": "range",
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `920\\d{3}`)[5m]))",
+            "hide": false,
+            "queryType": "range",
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `913\\d{3}`)[5m]))",
+            "hide": false,
+            "queryType": "range",
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `949\\d{3}`)[5m]))",
+            "hide": false,
+            "queryType": "range",
+            "refId": "E"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `980\\d{3}`)[5m]))",
+            "hide": false,
+            "queryType": "range",
+            "refId": "F"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `930\\d{3}`)[5m]))",
+            "hide": false,
+            "queryType": "range",
+            "refId": "G"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `941\\d{3}`)[5m]))",
+            "hide": false,
+            "queryType": "range",
+            "refId": "H"
+          }
+        ],
+        "title": "ModSecurity Rate Conf Types",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "#6ED0E0",
+                  "value": 20
+                },
+                {
+                  "color": "#EAB839",
+                  "value": 60
+                },
+                {
+                  "color": "#EF843C",
+                  "value": 70
+                },
+                {
+                  "color": "#E24D42",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 13,
+          "w": 12,
+          "x": 0,
+          "y": 37
+        },
+        "id": 8,
+        "options": {
+          "basemap": {
+            "config": {},
+            "name": "Layer 0",
+            "type": "default"
+          },
+          "controls": {
+            "mouseWheelZoom": true,
+            "showAttribution": true,
+            "showDebug": false,
+            "showMeasure": false,
+            "showScale": false,
+            "showZoom": true
+          },
+          "layers": [
+            {
+              "config": {
+                "showLegend": true,
+                "style": {
+                  "color": {
+                    "field": "Count",
+                    "fixed": "dark-green"
+                  },
+                  "opacity": 0.4,
+                  "rotation": {
+                    "fixed": 0,
+                    "max": 360,
+                    "min": -360,
+                    "mode": "mod"
+                  },
+                  "size": {
+                    "field": "Count",
+                    "fixed": 5,
+                    "max": 8,
+                    "min": 2
+                  },
+                  "symbol": {
+                    "fixed": "img/icons/marker/x-mark.svg",
+                    "mode": "fixed"
+                  },
+                  "symbolAlign": {
+                    "horizontal": "center",
+                    "vertical": "center"
+                  },
+                  "text": {
+                    "field": "Count",
+                    "fixed": "",
+                    "mode": "field"
+                  },
+                  "textConfig": {
+                    "fontSize": 12,
+                    "offsetX": 7,
+                    "offsetY": 0,
+                    "textAlign": "left",
+                    "textBaseline": "middle"
+                  }
+                }
+              },
+              "filterData": {
+                "id": "byRefId",
+                "options": "A"
+              },
+              "location": {
+                "gazetteer": "public/gazetteer/countries.json",
+                "lookup": "Field",
+                "mode": "lookup"
+              },
+              "name": "Hits",
+              "tooltip": true,
+              "type": "markers"
+            }
+          ],
+          "tooltip": {
+            "mode": "details"
+          },
+          "view": {
+            "allLayers": true,
+            "id": "coords",
+            "lat": 40.164528,
+            "lon": -14.352344,
+            "zoom": 1.97
+          }
+        },
+        "pluginVersion": "11.2.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "sum by (Ipcountry)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"}\r\n|= \"Cf-Ipcountry:\"\r\n| pattern `Cf-Ipcountry: \u003cIpcountry\u003e`\r\n [$__interval]))",
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "GeoMap Locations",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          },
+          {
+            "id": "reduce",
+            "options": {
+              "labelsToFields": false,
+              "reducers": [
+                "count"
+              ]
+            }
+          }
+        ],
+        "type": "geomap"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 7,
+          "x": 12,
+          "y": 42
+        },
+        "id": 10,
+        "options": {
+          "displayLabels": [
+            "percent",
+            "name"
+          ],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "percent",
+              "value"
+            ]
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "count"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (engine_mode)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n|= \"Engine-Mode:\"\r\n| pattern `Engine-Mode: \"\u003cengine_mode\u003e\"`\r\n [$__interval])))",
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "ModSecurity Engine Mode",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 5,
+          "x": 19,
+          "y": 42
+        },
+        "id": 6,
+        "options": {
+          "displayLabels": [
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "topk(10, sum by (hostname)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} \r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \u003cline\u003e] [level \u003clevel\u003e] [client \u003cclient\u003e] \u003c_\u003e [file \"\u003cfile2\u003e\"] [line \"\u003cline1\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [ver \"\u003cver\u003e\"] \u003ctag\u003e [hostname \"\u003chostname\u003e\"] [uri \"\u003curi\u003e\"] [unique_id \"\u003cunique_id\u003e\"]`\r\n[$__interval])))",
+            "queryType": "range",
+            "refId": "A"
+          }
+        ],
+        "title": "ModSecurity hosts",
+        "transformations": [
+          {
+            "id": "prepareTimeSeries",
+            "options": {
+              "format": "multi"
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Time",
+                  "91.126.30.243",
+                  "elhacker.info",
+                  "hostench.eu",
+                  "www.hostench.eu",
+                  "ns2.elhacker.net"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 24,
+          "x": 0,
+          "y": 50
+        },
+        "id": 1,
+        "options": {
+          "dedupStrategy": "none",
+          "enableLogDetails": true,
+          "prettifyLogMessage": false,
+          "showCommonLabels": false,
+          "showLabels": false,
+          "showTime": false,
+          "sortOrder": "Descending",
+          "wrapLogMessage": false
+        },
+        "pluginVersion": "11.2.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "{filename=\"/var/log/httpd/modsec_audit.log\"} |= \"Apache-Error\"\r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \u003cline\u003e] [level \u003clevel\u003e] [client \u003cclient\u003e] \u003c_\u003e [file \"\u003cfile2\u003e\"] [line \"\u003cline1\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] \u003c_\u003e [ver \"\u003cver\u003e\"] \u003ctag\u003e [hostname \"\u003chostname\u003e\"] [uri \"\u003curi\u003e\"] [unique_id \"\u003cunique_id\u003e\"]`\r\n| line_format \"Client {{.client}} with request {{.uri}} at {{.hostname}}\"",
+            "hide": false,
+            "queryType": "range",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "editorMode": "code",
+            "expr": "{filename=\"/var/log/httpd/modsec_audit.log\"} |= \"ModSecurity:\"\r\n| pattern `\u003c_\u003e [file \"\u003cfile\u003e\"] [line \u003cline\u003e] [level \u003clevel\u003e] [client \u003cclient\u003e] \u003c_\u003e [file \"\u003cfile2\u003e\"] [line \"\u003cline1\u003e\"] [id \"\u003cid\u003e\"] [msg \"\u003cmsg\u003e\"] [severity \"\u003cseverity\u003e\"] [ver \"\u003cver\u003e\"] \u003ctag\u003e [hostname \"\u003chostname\u003e\"] [uri \"\u003curi\u003e\"] [unique_id \"\u003cunique_id\u003e\"]`\r\n| line_format \"Client {{.client}} rule {{.msg}} with request {{.uri}} status {{.response_status}} at {{.hostname}}\"",
+            "hide": true,
+            "queryType": "range",
+            "refId": "B"
+          }
+        ],
+        "title": "ModSecurity  Log",
+        "type": "logs"
+      }
+    ],
+    "preload": false,
+    "refresh": "",
+    "schemaVersion": 41,
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "ModSecurity Apache WAF OWASP CRS 2"
+  }
+}
