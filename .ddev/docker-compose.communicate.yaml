@@ -1,7 +1,0 @@
-services:
-  web:
-    external_links:
-      - "ddev-router:fulldemocookiemanager.ddev.site"
-      - "ddev-router:typo13.ddev.site"
-      - "ddev-router:wordpressdemo.ddev.site"
-      - "ddev-router:typo13legacy.ddev.site"

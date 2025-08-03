@@ -1,4 +1,6 @@
-    - [ ] grafana remove json shit
+    - [x] grafana remove json shit
+    - [x] learn and init provising
+    - [x] tmux stuff
     - [ ] add autoload dahsboard and dbs
     - [ ] add optional saving to git
     - [ ] add failToBan
