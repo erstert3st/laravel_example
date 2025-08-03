@@ -1,13 +1,24 @@
 -> why use git when you have a blog oO wtf oldi  
-https://blog.elhacker.net/2023/12/tutorial-apache-modsecurity-waf.html
+## grafana
+-> https://blog.elhacker.net/2024/11/grafana-dashboard-modsecurity-gui-waf-owasp-crs-apache-nginx.html
 
+## apache
+https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-promtail.html
+
+## modsec
+- https://blog.elhacker.net/2023/12/tutorial-apache-modsecurity-waf.html
+- https://blog.elhacker.net/2020/12/guia-configuracion-y-optimizacion-tuning-hardening-apache-http2-mpm-suexec-http2-mod-security.html
+## failToban
+- https://blog.elhacker.net/2024/09/mitigar-ataques-ddos-servidor-web-fail2ban-get-post.html
+- https://blog.elhacker.net/2014/05/instalar-y-configurar-fail2ban.html # oldAF
 ## Todo
 
 - [x] grafana remove json shit
 - [x] learn and init provisioning
 - [x] tmux stuff
-- [ ] add autoload dashboard and dbs
+- [ ] add autoload dashboard and dbs ->  cat get working for now on iac...
 - [ ] add failToBan
+- [ ] configure AbuseIpDB
 - [ ] add failToBan Dashboard
 - [ ] add Other Dashboard from weird Spanish dude
 - [ ] add Other Tool from weird Spanish dude

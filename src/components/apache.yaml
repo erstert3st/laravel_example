@@ -5,7 +5,7 @@ services:
     container_name: apache
     volumes:
     - ./web/hello/:/var/www/html/public
-    - ./config/web/apache/http.conf:/etc/apache2/vhost-templates/http.conf
+    - ./config/apache/http.conf:/etc/apache2/vhost-templates/http.conf
     ports:
     - "8080:8080"
     - "9000:9000" # move to seperate network 
