@@ -16,6 +16,7 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [x] tmux recovery
 - [x] tmux IAC
 - [ ] Crowdsec
+- [ ] apache traffic exporter
 - second apache https://github.com/grafana/jsonnet-libs/tree/master/apache-http-mixin
 
 ## Todo

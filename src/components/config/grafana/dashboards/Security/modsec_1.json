@@ -87,7 +87,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "topk(10, sum by (request_request_line)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} | json [$__interval])))",
+            "expr": "topk(10, sum by (request_request_line)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} | json [$__interval])))",
             "queryType": "range",
             "refId": "A"
           }
@@ -166,7 +166,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "topk(10, sum by (transaction_remote_address)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} | json [$__interval])))",
+            "expr": "topk(10, sum by (transaction_remote_address)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} | json [$__interval])))",
             "queryType": "range",
             "refId": "A"
           }
@@ -241,7 +241,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "topk(10, sum by (audit_data_action_message)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} | json [$__interval])))",
+            "expr": "topk(10, sum by (audit_data_action_message)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} | json [$__interval])))",
             "queryType": "range",
             "refId": "A"
           }
@@ -328,7 +328,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "topk(10, sum by (request_headers_User_Agent)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} | json [$__interval])))",
+            "expr": "topk(10, sum by (request_headers_User_Agent)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} | json [$__interval])))",
             "queryType": "range",
             "refId": "A"
           }
@@ -403,7 +403,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "topk(10, sum by (request_headers_Host)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} | json [$__interval])))",
+            "expr": "topk(10, sum by (request_headers_Host)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} | json [$__interval])))",
             "queryType": "range",
             "refId": "A"
           }
@@ -503,7 +503,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "topk(10, sum by (response_status)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} | json [$__interval])))",
+            "expr": "topk(10, sum by (response_status)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} | json [$__interval])))",
             "queryType": "range",
             "refId": "A"
           }
@@ -742,7 +742,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Cf_Ipcountry)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} | json [$__interval]))",
+            "expr": "sum by (request_headers_Cf_Ipcountry)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} | json [$__interval]))",
             "queryType": "range",
             "refId": "A"
           }
@@ -953,7 +953,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `932\\d{3}`)[5m]))",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/modsec/modsec_audit.log\"} |~ `932\\d{3}`)[5m]))",
             "queryType": "range",
             "refId": "A"
           },
@@ -963,7 +963,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `942\\d{3}`)[5m]))",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/modsec/modsec_audit.log\"} |~ `942\\d{3}`)[5m]))",
             "hide": false,
             "queryType": "range",
             "refId": "B"
@@ -974,7 +974,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `920\\d{3}`)[5m]))",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/modsec/modsec_audit.log\"} |~ `920\\d{3}`)[5m]))",
             "hide": false,
             "queryType": "range",
             "refId": "C"
@@ -985,7 +985,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `913\\d{3}`)[5m]))",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/modsec/modsec_audit.log\"} |~ `913\\d{3}`)[5m]))",
             "hide": false,
             "queryType": "range",
             "refId": "D"
@@ -996,7 +996,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `949\\d{3}`)[5m]))",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/modsec/modsec_audit.log\"} |~ `949\\d{3}`)[5m]))",
             "hide": false,
             "queryType": "range",
             "refId": "E"
@@ -1007,7 +1007,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `980\\d{3}`)[5m]))",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/modsec/modsec_audit.log\"} |~ `980\\d{3}`)[5m]))",
             "hide": false,
             "queryType": "range",
             "refId": "F"
@@ -1018,7 +1018,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `930\\d{3}`)[5m]))",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/modsec/modsec_audit.log\"} |~ `930\\d{3}`)[5m]))",
             "hide": false,
             "queryType": "range",
             "refId": "G"
@@ -1029,7 +1029,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/httpd/modsec_audit.log\"} |~ `941\\d{3}`)[5m]))",
+            "expr": "sum by (request_headers_Host)(rate(({filename=\"/var/log/modsec/modsec_audit.log\"} |~ `941\\d{3}`)[5m]))",
             "hide": false,
             "queryType": "range",
             "refId": "H"
@@ -1109,7 +1109,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "topk(10, sum by (request_headers_Cf_Ipcountry)\r\n(count_over_time({filename=\"/var/log/httpd/modsec_audit.log\"} | json [$__interval])))",
+            "expr": "topk(10, sum by (request_headers_Cf_Ipcountry)\r\n(count_over_time({filename=\"/var/log/modsec/modsec_audit.log\"} | json [$__interval])))",
             "queryType": "range",
             "refId": "A"
           }
@@ -1250,7 +1250,7 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "editorMode": "code",
-            "expr": "{filename=\"/var/log/httpd/modsec_audit.log\"} \r\n| json\r\n| line_format \"Client {{.transaction_remote_address}} from {{.request_headers_Cf_Ipcountry}} with request {{.request_request_line}} status {{.response_status}} at {{.request_headers_Host}}\"",
+            "expr": "{filename=\"/var/log/modsec/modsec_audit.log\"} \r\n| json\r\n| line_format \"Client {{.transaction_remote_address}} from {{.request_headers_Cf_Ipcountry}} with request {{.request_request_line}} status {{.response_status}} at {{.request_headers_Host}}\"",
             "queryType": "range",
             "refId": "A"
           }
