@@ -27,8 +27,8 @@ services:
       - "4318:4318"         # OTLP HTTP/protobuf
     volumes:
       - ./config/alloy:/etc/alloy
+      - ../../.data/apache:/var/log/apache2
       - modsec-logs:/var/log/modsec
-      - apache-logs:/var/log/apache2
       - fail2ban-logs:/var/log/fail2ban
       - geoip:/geoip
     develop:

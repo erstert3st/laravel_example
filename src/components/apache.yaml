@@ -6,7 +6,7 @@ services:
     volumes:
       - ./web/hello/:/var/www/html/public
       - ./config/apache/http.conf:/etc/apache2/vhost-templates/http.conf
-      - apache-logs:/var/log/apache2
+      - ../../.data/apache:/var/log/apache2
     ports:
       - "8080:8080"
       - "9000:9000" # move to seperate network 
@@ -16,9 +16,10 @@ services:
       start_period: 10s
       timeout: 10s
       retries: 5
-    env_file:
-      - path: ~/.grafana_dev_datasources
-        required: false
+    # env_file:
+    environment:
+      - LOG_OUTPUT_LEVEL=info
+      # - APACHE_STATUS_URL=http://localhost:8080/server-status?auto  
     #dockerdocker run -v /home/user-debian/alloy_test/alloy/example/web/hello:/var/www/html/public  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/status.conf:/etc/apache2/conf-available/status.conf  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/http.conf:/etc/apache2/vhost-templates/http.conf -p 8080:8080  --name web -d   serversideup/php:8.4-fpm-apache
 
   ################  MODSEC  ###############################  MODSEC  #########################  
@@ -51,7 +52,7 @@ services:
       - modsecurity-waf
     entrypoint: ["sleep", "infinity"]
     volumes:
-      - apache-logs:/testing/apache
+      - ../../.data/apache:/testing/apache
       - modsec-logs:/testing/modsec
       - fail2ban-logs:/testing/fail2ban
       - geoip:/testing/geoip
@@ -78,7 +79,7 @@ services:
       # - F2B_MAX_RETRY=3
     volumes:
       - ./config/fail2ban:/config
-      - apache-logs:/remotelogs/apache2:ro
+      - ../../.data/apache:/remotelogs/apache2:ro
       - modsec-logs:/remotelogs/modsec:ro
       - fail2ban-logs:/config/log/fail2ban
       - /var/log:/var/log:ro # not needed for now
