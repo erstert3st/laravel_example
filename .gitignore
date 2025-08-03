@@ -30,6 +30,7 @@ yarn-error.log
 **/.eventcache
 **/vendor
 **/data-alloy/
+**/.data/** 
 
 **/cmd/agent/agent
 **/cmd/agentctl/agentctl

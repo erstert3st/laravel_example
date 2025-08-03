@@ -13,8 +13,8 @@ services:
       watch:
         - path: ./config/grafana/config
           action: restart
-        # - path: ./config/grafana/
-        #   action: restart
+        - path: ./config/grafana/dashboards/provisioning.yaml
+          action: restart
     ports:
       - "3000:3000"
     healthcheck:

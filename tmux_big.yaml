@@ -8,7 +8,7 @@ windows:
     - shell_command:
         - zsh
     - shell_command:
-        - fish
+        -  echo Todo.md | entr mca Todo.md --paging never
     - shell_command:
         - echo map.md | entr mca map.md --paging never
     - shell_command:

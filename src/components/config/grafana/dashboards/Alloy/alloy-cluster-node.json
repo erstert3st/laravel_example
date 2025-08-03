@@ -5,6 +5,7 @@
     "name": "4047e755d822da63c8158cde32ae4dce"
   },
   "spec": {
+    "title": "Alloy / Cluster Node",
     "annotations": {
       "list": [
         {
@@ -493,7 +494,6 @@
         "1d"
       ]
     },
-    "timezone": "utc",
-    "title": "Alloy / Cluster Node"
+    "timezone": "utc"
   }
 }
