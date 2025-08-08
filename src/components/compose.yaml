@@ -10,4 +10,5 @@ include:
   - ./apache.yaml
   - ./exporter.yaml
   - ./alloy.yaml
+  - ./security.yaml
 

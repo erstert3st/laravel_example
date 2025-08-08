@@ -1,0 +1,62 @@
+services:
+###############  MODSEC  ###############################  MODSEC  #########################  
+  #https://github.com/coreruleset/modsecurity-crs-docker
+  modsecurity-waf:
+    image: owasp/modsecurity-crs:apache
+    container_name: modsecurity-waf
+    environment:
+      BACKEND: http://apache:8080          # Link to backend container
+      MODSEC_RULE_ENGINE: On              # Options: On | DetectionOnly | Off
+      PARANOIA: 4                       
+      TZ: "UTC"
+     #/var/log/modsec_audit.log  
+     #MODSEC_AUDIT_LOG: /usr/local/apache2/logs
+      MODSEC_AUDIT_LOG: /var/log/modsec_audit.log  
+      MODSEC_AUDIT_ENGINE: on
+    volumes:
+      - modsec-logs:/var/log
+    ports:
+      - "80:80"
+      - "81:8080"
+    depends_on:
+      - apache
+
+  #################  Testing  ################################  Testing  #########################
+  testing:
+    image: nicolaka/netshoot:v0.13
+    container_name: testing
+    depends_on:
+      - modsecurity-waf
+    entrypoint: ["sleep", "infinity"]
+    volumes:
+      - ../../.data/apache:/testing/apache
+      - modsec-logs:/testing/modsec
+      - fail2ban-logs:/testing/fail2ban
+      - geoip:/testing/geoip
+
+
+  ################ Fail2Ban  ################################  Fail2Ban  #########################   https://hub.docker.com/r/linuxserver/fail2ban
+  #alternative with more downloads https://github.com/crazy-max/docker-fail2ban <- more downloads!
+
+  fail2ban:
+    # image: lscr.io/linuxserver/fail2ban:latest
+    image: lscr.io/linuxserver/fail2ban:1.1.0
+    container_name: fail2ban
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    network_mode: host
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=Etc/UTC
+      - VERBOSITY=-vv #optional
+      # - F2B_LOG_LEVEL=INFO
+      # - F2B_DB_PURGE_AGE=1d
+      # - F2B_MAX_RETRY=3
+    volumes:
+      - ./config/fail2ban:/config
+      - ../../.data/apache:/remotelogs/apache2:ro
+      - modsec-logs:/remotelogs/modsec:ro
+      - fail2ban-logs:/config/log/fail2ban
+      - /var/log:/var/log:ro # not needed for now

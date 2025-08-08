@@ -1,13 +1,13 @@
 services:
   apache:
-    image: httpd:bookworm #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    image: shinsenter/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
     # image: serversideup/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
     restart: on-failure
     container_name: apache
     volumes:
-      - ./web/hello/:/usr/local/apache2/htdocs/
+      - ./web/hello/:/var/www/html
       # - ./config/apache/http.conf:/usr/local/apache2/conf/http.conf
-      - ./config/apache/http.conf:/usr/local/apache2/conf/http.conf
+      - ./config/apache/http.conf:/etc/apache2/custom.d/custom.conf
       - ../../.data/apache:/var/log/apache2
     develop:
       watch:
@@ -17,79 +17,49 @@ services:
       - "8080:80"
       - "9000:9000" # move to seperate network 
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/healthcheck" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:80/server-status" ]
       interval: 1s
       start_period: 10s
       timeout: 10s
       retries: 5
     # env_file:
     environment:
-      - LOG_OUTPUT_LEVEL=info
-      # - APACHE_STATUS_URL=http://localhost:8080/server-status?auto  
+      - DEBUG=1
+      - DEFAULT_LOG_PATH=/var/log/apache2/default.log
+      - LOG_OUTPUT_LEVEL=INFO
+      - APACHE_ACCESS_LOG=/var/log/apache2/access.log
+      - APACHE_ERROR_LOG=/var/log/apache2/error.log
+      - APACHE_LOG_LEVEL=INFO
+      - SMTP_LOG=/var/log/smtp.log
+      - PHP_LISTEN=0.0.0.0:9000 
+      - PHP_ACCESS_LOG=/var/log/php-fpm.log
+      - PHP_ERROR_LOG=/var/log/php-fpm.error.log
+      - PHP_FASTCGI_LOGGING=Off
+      - PHP_LOG_LEVEL=notice
+      - PHP_MAIL_LOG=/var/log/apache2/php-mail.log
+      - PHP_OPCACHE_ERROR_LOG=/var/log/apache2/php-fpm.opcache.log
+      - PHP_SLOWLOG=/var/log/apache2/php-fpm.slow.log
+      - PHP_SYSLOG_FACILITY=syslog
+      # - APACHE_STATUS_URL=http://localhost:8080/server-status?auto
     #dockerdocker run -v /home/user-debian/alloy_test/alloy/example/web/hello:/var/www/html/public  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/status.conf:/etc/apache2/conf-available/status.conf  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/http.conf:/etc/apache2/vhost-templates/http.conf -p 8080:8080  --name web -d   serversideup/php:8.4-fpm-apache
 
-  ################  MODSEC  ###############################  MODSEC  #########################  
-  #https://github.com/coreruleset/modsecurity-crs-docker
-  modsecurity-waf:
-    image: owasp/modsecurity-crs:apache
-    container_name: modsecurity-waf
-    environment:
-      BACKEND: http://apache:8080          # Link to backend container
-      MODSEC_RULE_ENGINE: On              # Options: On | DetectionOnly | Off
-      PARANOIA: 4                       
-      TZ: "UTC"
-     #/var/log/modsec_audit.log  
-     #MODSEC_AUDIT_LOG: /usr/local/apache2/logs
-      MODSEC_AUDIT_LOG: /var/log/modsec_audit.log  
-      MODSEC_AUDIT_ENGINE: on
-    volumes:
-      - modsec-logs:/var/log
-    ports:
-      - "80:80"
-      - "81:8080"
-    depends_on:
-      - apache
+  ################  FPM  ###############################  FPM  #########################  
+  # fpm:
+  #   image: serversideup/php:8.4-fpm-alpine
+  #   container_name: fpm
+  #   volumes:
+  #     - ./web/hello/:/var/www/html
+  #     - ../../.data/php-fpm:/var/log/php-fpm
+  #   ports:
+  #     - "9000:9000"
+  #   healthcheck:
+  #     test: [ "CMD", "curl", "-f", "http://localhost:9000/status" ]
+  #     interval: 1s
+  #     start_period: 10s
+  #     timeout: 10s
+  #     retries: 5
 
-  #################  Testing  ################################  Testing  #########################
-  testing:
-    image: nicolaka/netshoot:v0.13
-    container_name: testing
-    depends_on:
-      - modsecurity-waf
-    entrypoint: ["sleep", "infinity"]
-    volumes:
-      - ../../.data/apache:/testing/apache
-      - modsec-logs:/testing/modsec
-      - fail2ban-logs:/testing/fail2ban
-      - geoip:/testing/geoip
-
-
-  ################ Fail2Ban  ################################  Fail2Ban  #########################   https://hub.docker.com/r/linuxserver/fail2ban
-  #alternative with more downloads https://github.com/crazy-max/docker-fail2ban <- more downloads!
-
-  fail2ban:
-    # image: lscr.io/linuxserver/fail2ban:latest
-    image: lscr.io/linuxserver/fail2ban:1.1.0
-    container_name: fail2ban
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    network_mode: host
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=Etc/UTC
-      - VERBOSITY=-vv #optional
-      # - F2B_LOG_LEVEL=INFO
-      # - F2B_DB_PURGE_AGE=1d
-      # - F2B_MAX_RETRY=3
-    volumes:
-      - ./config/fail2ban:/config
-      - ../../.data/apache:/remotelogs/apache2:ro
-      - modsec-logs:/remotelogs/modsec:ro
-      - fail2ban-logs:/config/log/fail2ban
-      - /var/log:/var/log:ro # not needed for now
-
+  
 
 
 

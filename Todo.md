@@ -20,6 +20,8 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - second apache https://github.com/grafana/jsonnet-libs/tree/master/apache-http-mixin
 
 ## Todo
+- [ ] add healthcheck to fpm  -> no apache Skills -.-"
+    - [ ] Migrate FPM to other image with Healthcheck
 - [ ] add autoload dashboard and dbs ->  cat get working for now on iac...
 - [x] grafana remove json shit
 - [x] learn and init provisioning
