@@ -20,7 +20,7 @@ prometheus.scrape "integrations_apache_http_histogram" {
 }
 
 prometheus.exporter.apache "integrations_apache_http" {
-	scrape_uri = "http://apache:8080/server-status?auto"
+	scrape_uri = "http://apache:80/server-status?auto"
 }
 
 discovery.relabel "integrations_apache_http" {

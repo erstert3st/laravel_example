@@ -8,7 +8,7 @@
 | **pyroscope**           | grafana/pyroscope:1.5.0         | 4040       | HTTP     | Profiling Tool                               |
 | **mariadb**             | mariadb:latest                  | 3306       | MySQL    | Datenbank                                    |
 | **phpfpmexporter**      | hipages/php-fpm_exporter        | 9253       | HTTP     | Exporter für PHP-FPM ( <- apache:9000/status)|
-| **apacheexporter**      | bitnami/apache-exporter         | 9117       | HTTP     | Exporter für Apache Status ( <- apache:8080) |
+| **apacheexporter**      | bitnami/apache-exporter         | 9117       | HTTP     | Exporter für Apache Status ( <- apache:80) |
 | **mysqldexporter**      | prom/mysqld-exporter            | 9104       | HTTP     | Exporter für MariaDB                         |
 | **grafana**             | grafana/grafana:12.0.0          | 3000       | HTTP     | Dashboard UI, Healthcheck auf /healthz       |
 | **install_dashboard**   | build: images/jb                | —          | —        | jb install, hängt von Grafana ab             |
@@ -18,7 +18,7 @@
 ### usefull links
 - devContainer        → http://localhost:8000
 - alloy:12345         → http://localhost:1234
-- apache:8080         → http://localhost:8080
+- apache:80         → http://localhost:8080
 - modsecurity:8080    → http://localhost:81
 - grafana:3000        → http://localhost:3000
 - pyroscope:4040      → http://localhost:4040

@@ -4,8 +4,8 @@ services:
     image: hipages/php-fpm_exporter
     container_name: phpfpmexporter
     environment:
-      - PHP_FPM_SCRAPE_URI=tcp://apache:9000/status
-      # - PHP_FPM_LOG_LEVEL= "info"
+      - PHP_FPM_SCRAPE_URI="tcp://apache:80/status/php-fpm"
+          # - PHP_FPM_LOG_LEVEL= "notice"
       - PHP_FPM_LOG_LEVEL=debug
     ports:
       - "9253:9253"
@@ -17,12 +17,12 @@ services:
     image: bitnami/apache-exporter:latest
     container_name: apacheexporter
     # environment:
-      # - APACHE_STATUS_URL=http://apache:8080/server-status?auto
-      # - SCRAPE_URI=http://apache:8080/server-status?auto
+      # - APACHE_STATUS_URL=http://apache:80/server-status?auto
+      # - SCRAPE_URI=http://apache:80/server-status?auto
     ports:
       - "9117:9117"
     command:
-      - --scrape_uri=http://apache:8080/server-status?auto
+      - --scrape_uri=http://apache:80/server-status?auto
     depends_on:
       - apache
 

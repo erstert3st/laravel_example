@@ -5,7 +5,7 @@ services:
     image: owasp/modsecurity-crs:apache
     container_name: modsecurity-waf
     environment:
-      BACKEND: http://apache:8080          # Link to backend container
+      BACKEND: http://apache:80          # Link to backend container
       MODSEC_RULE_ENGINE: On              # Options: On | DetectionOnly | Off
       PARANOIA: 4                       
       TZ: "UTC"

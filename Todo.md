@@ -27,17 +27,19 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [x] learn and init provisioning
 - [] make all important things to volumes
 - [x] add failToBan
+- [x] add "normal apache"
+- [ ] trigger failban
 - [ ] failToBan configure right
 - [ ] failToBan testing
 - [ ] failToBan dashboards
 - [ ] failToBan exporter | alloy
-- [ ] configure AbuseIpDB
+- [ ] add HealthCheck to all
 - [ ] add failToBan Dashboard
 - [ ] add Other Dashboard from weird Spanish dude
-- [ ] add Other Tool from weird Spanish dude
 - [ ] add Other Tool Dashboard from weird Spanish dude
+- [ ] docker prometheus exporter 
 - [ ] docker monitoring
 - [ ] docker service discovery
-- [ ] docker service discovery
+- [ ] switch to podman  
 
 ~~add optional saving to git~~
