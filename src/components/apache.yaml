@@ -1,14 +1,20 @@
 services:
   apache:
-    image: serversideup/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    image: httpd:bookworm #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    # image: serversideup/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
     restart: on-failure
     container_name: apache
     volumes:
-      - ./web/hello/:/var/www/html/public
-      - ./config/apache/http.conf:/etc/apache2/vhost-templates/http.conf
+      - ./web/hello/:/usr/local/apache2/htdocs/
+      # - ./config/apache/http.conf:/usr/local/apache2/conf/http.conf
+      - ./config/apache/http.conf:/usr/local/apache2/conf/http.conf
       - ../../.data/apache:/var/log/apache2
+    develop:
+      watch:
+        - path: ./config/apache/http.conf
+          action: restart
     ports:
-      - "8080:8080"
+      - "8080:80"
       - "9000:9000" # move to seperate network 
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/healthcheck" ]
