@@ -1,7 +1,7 @@
 //------------------apache----------------------  https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-apache-http
 
 discovery.relabel "integrations_apache_http_histogram" {
-    targets = prometheus.exporter.self.alloy.targets
+	targets = prometheus.exporter.self.alloy.targets
 
 	rule {
 		replacement  = "integrations/apache_http"
@@ -20,11 +20,11 @@ prometheus.scrape "integrations_apache_http_histogram" {
 }
 
 prometheus.exporter.apache "integrations_apache_http" {
-	scrape_uri = "http://apache:80/server-status?auto"
+	scrape_uri = "http://apache:8080/server-status?auto"
 }
 
 discovery.relabel "integrations_apache_http" {
-    targets = prometheus.exporter.apache.integrations_apache_http.targets
+	targets = prometheus.exporter.apache.integrations_apache_http.targets
 
 	rule {
 		target_label = "instance"
@@ -111,7 +111,7 @@ loki.process "logs_integrations_integrations_apache_access" {
 		values = {
 			job          = "apache_access",
 			service_name = "apache",
-			logtype = "access",
+			logtype      = "access",
 		}
 	}
 
@@ -120,7 +120,6 @@ loki.process "logs_integrations_integrations_apache_access" {
 			method = null,
 		}
 	}
-
 }
 
 loki.source.file "logs_integrations_integrations_apache_access" {
@@ -350,19 +349,12 @@ prometheus.scrape "apacheexporter" {
 
 prometheus.scrape "phpfpmexporter" {
 	targets = [
-		{"__address__" = "phpfpmexporter:9253", "job" = "phpfpm"},
+		{"__address__" = "phpfpmexporter:9253"},
 	]
 	forward_to      = [prometheus.remote_write.mimir.receiver]
 	scrape_interval = "15s"
 }
 
-prometheus.scrape "php-fpm" {
-  targets = [
-    { "__address__" = "php-fpm-exporter:9253" }
-  ]
-  forward_to = [prometheus.remote_write.default.receiver]
-  scrape_interval = "15s"
-}
 // ----------------- scraper end -----------------------------------
 
 // ----------------- OpenTelemetry logs start -----------------------------------

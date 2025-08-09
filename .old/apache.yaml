@@ -1,0 +1,89 @@
+services:
+  apache:
+    image: shinsenter/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    # image: serversideup/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    restart: on-failure
+    container_name: apache
+    volumes:
+      - ./web/hello/:/var/www/html
+      # - ./config/apache/http.conf:/usr/local/apache2/conf/http.conf
+      - ./config/apache/http.conf:/etc/apache2/custom.d/custom.conf
+      - ./config/apache/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ../../.data/apache:/var/log/apache2
+    develop:
+      watch:
+        - path: ./config/apache/http.conf
+          action: restart
+    ports:
+      - "8080:80"
+      - "9000:9000" # move to seperate network 
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/server-status" ]
+      interval: 1s
+      start_period: 10s
+      timeout: 10s
+      retries: 5
+    # env_file:
+    environment:
+      - DEBUG=1
+      - DEFAULT_LOG_PATH=/var/log/apache2/default.log
+      - LOG_OUTPUT_LEVEL=INFO
+      - APACHE_ACCESS_LOG=/var/log/apache2/access.log
+      - APACHE_ERROR_LOG=/var/log/apache2/error.log
+      - APACHE_LOG_LEVEL=INFO
+      - SMTP_LOG=/var/log/smtp.log
+      - PHP_LISTEN=0.0.0.0:9000 
+      - PHP_ACCESS_LOG=/var/log/php-fpm.log
+      - PHP_ERROR_LOG=/var/log/php-fpm.error.log
+      - PHP_FASTCGI_LOGGING=Off
+      - PHP_LOG_LEVEL=notice
+      - PHP_MAIL_LOG=/var/log/apache2/php-mail.log
+      - PHP_OPCACHE_ERROR_LOG=/var/log/apache2/php-fpm.opcache.log
+      - PHP_SLOWLOG=/var/log/apache2/php-fpm.slow.log
+      - PHP_SYSLOG_FACILITY=syslog
+      # - APACHE_STATUS_URL=http://localhost:8080/server-status?auto
+    #dockerdocker run -v /home/user-debian/alloy_test/alloy/example/web/hello:/var/www/html/public  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/status.conf:/etc/apache2/conf-available/status.conf  -v /home/user-debian/alloy_test/alloy/example/config/web/apache/http.conf:/etc/apache2/vhost-templates/http.conf -p 8080:8080  --name web -d   serversideup/php:8.4-fpm-apache
+
+  ################  FPM  ###############################  FPM  #########################  
+  # fpm:
+  #   image: serversideup/php:8.4-fpm-alpine
+  #   container_name: fpm
+  #   volumes:
+  #     - ./web/hello/:/var/www/html
+  #     - ../../.data/php-fpm:/var/log/php-fpm
+  #   ports:
+  #     - "9000:9000"
+  #   healthcheck:
+  #     test: [ "CMD", "curl", "-f", "http://localhost:9000/status" ]
+  #     interval: 1s
+  #     start_period: 10s
+  #     timeout: 10s
+  #     retries: 5
+
+  
+
+
+
+
+
+
+  # TODO
+#   Umask for running applications
+
+# For all of our images we provide the ability to override the default umask settings for services started within the containers using the optional -e UMASK=022 setting. Keep in mind umask is not chmod it subtracts from permissions based on it's value it does not add. Please read up here⁠
+
+# before asking for support.
+# User / Group Identifiers
+
+# When using volumes (-v flags), permissions issues can arise between the host OS and the container, we avoid this issue by allowing you to specify the user PUID and group PGID.
+
+# Ensure any volume directories on the host are owned by the same user you specify and any permissions issues will vanish like magic.
+
+# In this instance PUID=1000 and PGID=1000, to find yours use id your_user as below:
+
+# id your_user
+
+# Example output:
+
+# uid=1000(your_user) gid=1000(your_user) groups=1000(your_user)
+
