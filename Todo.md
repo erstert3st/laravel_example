@@ -22,12 +22,14 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 ## Todo
 - [ ] add healthcheck to fpm  -> no apache Skills -.-"
     - [ ] Migrate FPM to other image with Healthcheck
+    - [ ] fix php-exporter
 - [ ] add autoload dashboard and dbs ->  cat get working for now on iac...
 - [x] grafana remove json shit
 - [x] learn and init provisioning
 - [] make all important things to volumes
 - [x] add failToBan
 - [x] add "normal apache"
+- [x] fix all broken things
 - [ ] trigger failban
 - [ ] failToBan configure right
 - [ ] failToBan testing

@@ -7,6 +7,7 @@ services:
       - PHP_FPM_SCRAPE_URI="tcp://apache:80/status/php-fpm"
           # - PHP_FPM_LOG_LEVEL= "notice"
       - PHP_FPM_LOG_LEVEL=debug
+      - PHP_FPM_FIX_PROCESS_COUNT=true
     ports:
       - "9253:9253"
       # - "9250:9250"
@@ -38,3 +39,5 @@ services:
       - MYSQLD_EXPORTER_PASSWORD=XXXXXXXX
     depends_on:
       - mariadb
+
+

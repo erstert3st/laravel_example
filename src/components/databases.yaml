@@ -52,6 +52,6 @@ services:
       - MARIADB_PASSWORD=user
     volumes:
       - ../../.data/mariadb_data:/var/lib/mysql
-      - ./config/mariadb/init_metric_user.sql:/docker-entrypoint-initdb.d/init_metrics.sql:ro
+      - ./config/mariadb/init_metric_user.sql:/docker-entrypoint-initdb.d/init_metrics.sql
     ports:
       - "3306:3306"

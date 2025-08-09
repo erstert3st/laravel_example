@@ -355,6 +355,14 @@ prometheus.scrape "phpfpmexporter" {
 	forward_to      = [prometheus.remote_write.mimir.receiver]
 	scrape_interval = "15s"
 }
+
+prometheus.scrape "php-fpm" {
+  targets = [
+    { "__address__" = "php-fpm-exporter:9253" }
+  ]
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
 // ----------------- scraper end -----------------------------------
 
 // ----------------- OpenTelemetry logs start -----------------------------------
