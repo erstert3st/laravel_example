@@ -20,7 +20,7 @@ prometheus.scrape "integrations_apache_http_histogram" {
 }
 
 prometheus.exporter.apache "integrations_apache_http" {
-	scrape_uri = "http://apache:8080/server-status?auto"
+	scrape_uri = "http://apache:80/server-status?auto"
 }
 
 discovery.relabel "integrations_apache_http" {
@@ -349,8 +349,12 @@ prometheus.scrape "apacheexporter" {
 
 prometheus.scrape "phpfpmexporter" {
 	targets = [
-		{"__address__" = "phpfpmexporter:9253"},
+		{__address__ = "phpfpmexporter:9253",
+				__metrics_path__ = "/metrics",
+				"job"            = "phpfpm",
+		},
 	]
+
 	forward_to      = [prometheus.remote_write.mimir.receiver]
 	scrape_interval = "15s"
 }

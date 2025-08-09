@@ -1,24 +1,45 @@
 services:
   apache:
-    image: serversideup/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    image: shinsenter/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    # image: serversideup/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
     restart: on-failure
     container_name: apache
     volumes:
-      - ./web/hello/:/var/www/html/public
-      - ./config/apache/http.conf:/etc/apache2/vhost-templates/http.conf
+      - ./web/hello/:/var/www/html
+      - ./config/apache/http.conf:/etc/apache2/custom.d/custom.conf
+      #- ./config/apache/www.conf:/usr/local/etc/php-fpm.d/www.conf
       - ../../.data/apache:/var/log/apache2
+    develop:
+      watch:
+        - path: ./config/apache/http.conf
+          action: restart
     ports:
-      - "8080:8080"
+      - "8080:80"
       - "9000:9000" # move to seperate network 
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/healthcheck" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:80/server-status" ]
       interval: 1s
       start_period: 10s
       timeout: 10s
       retries: 5
     # env_file:
     environment:
-      - LOG_OUTPUT_LEVEL=info
+      - DEBUG=1
+      - DEFAULT_LOG_PATH=/var/log/apache2/default.log
+      - LOG_OUTPUT_LEVEL=INFO
+      - APACHE_ACCESS_LOG=/var/log/apache2/access.log
+      - APACHE_ERROR_LOG=/var/log/apache2/error.log
+      - APACHE_LOG_LEVEL=INFO
+      - SMTP_LOG=/var/log/smtp.log
+      - PHP_LISTEN=0.0.0.0:9000 
+      - PHP_ACCESS_LOG=/var/log/php-fpm.log
+      - PHP_ERROR_LOG=/var/log/php-fpm.error.log
+      - PHP_FASTCGI_LOGGING=Off
+      - PHP_LOG_LEVEL=notice
+      - PHP_MAIL_LOG=/var/log/apache2/php-mail.log
+      - PHP_OPCACHE_ERROR_LOG=/var/log/apache2/php-fpm.opcache.log
+      - PHP_SLOWLOG=/var/log/apache2/php-fpm.slow.log
+      - PHP_SYSLOG_FACILITY=syslog
       # - APACHE_STATUS_URL=http://localhost:8080/server-status?auto  
     #dockerdocker run -v /
   ################  FPM  ###############################  FPM  #########################  
@@ -31,7 +52,7 @@ services:
   #   ports:
   #     - "9000:9000"
   #   healthcheck:
-  #     test: [ "CMD", "curl", "-f", "http://localhost:9000/status" ]
+  #     test: [ "CMD", "curl", "-f", "http://localhost:9000/status/php-fpm" ]
   #     interval: 1s
   #     start_period: 10s
   #     timeout: 10s
