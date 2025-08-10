@@ -70,9 +70,9 @@ loki.process "logs_integrations_integrations_apache_access" {
 
 	stage.static_labels {
 		values = {
-			job          = "apache_access",
-			service_name = "apache",
-			logtype      = "access",
+			job            = "apache_access",
+			service_name   = "apache",
+			logtype        = "access",
 			detected_level = "INFO",
 		}
 	}
@@ -95,7 +95,7 @@ local.file_match "logs_integrations_integrations_apache_error" {
 		__path__    = "/var/log/apache2/error.log",
 		instance    = constants.hostname,
 		// instance    = "apache_web_server",
-		job = "integrations/apache_http",
+		job = "apache_http",
 	}]
 }
 
@@ -133,7 +133,7 @@ local.file_match "logs_integrations_integrations_apache_access" {
 		__path__    = "/var/log/apache2/access.log",
 		instance    = constants.hostname,
 		// instance    = "apache_web_server",
-		job = "integrations/apache_http",
+		job = "apache_http",
 	}]
 }
 //------------------ Apache end -----------------------------------
@@ -142,10 +142,10 @@ local.file_match "logs_integrations_integrations_apache_access" {
 loki.source.file "modsecurity_logs" {
 	targets = [
 		{__path__ = "/var/log/modsec/modsec_audit.log",
-				job      = "modsec",
-				app      = "fail2ban",
+				job      = "modsecurity",
+				app      = "modsecurity",
 				env      = "env",
-				instance = "lol"}, //dont touch this line!
+				instance = "modsecurity"}, //dont touch this line!
 	]
 	forward_to = [loki.process.modsecurity_logs.receiver]
 }
@@ -187,6 +187,30 @@ loki.process "modsecurity_logs" {
 			Host = null,
 		}
 	}
+	stage.geoip {
+		db      = "/geoip/GeoLite2-City.mmdb"
+		source  = "transaction_remote_address"
+		db_type = "city"
+	}
+
+	stage.labels {
+		values = {
+			transaction_remote_address = null,
+			geoip_city_name          = null,
+			geoip_country_name       = null,
+			geoip_country_code       = null,
+			geoip_continent_name     = null,
+			geoip_continent_code     = null,
+			geoip_location_latitude  = null,
+			geoip_location_longitude = null,
+			geoip_postal_code        = null,
+			geoip_timezone           = null,
+			geoip_subdivision_name   = null,
+			geoip_subdivision_code   = null,
+		}
+	}
+
+
 }
 //------------------ Modsecurity logs end -----------------------------
 //
@@ -204,12 +228,12 @@ loki.process "fail2ban" {
 	forward_to = [loki.write.default.receiver]
 
 	stage.multiline {
-		firstline     = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
+		firstline     = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(?:,\\d{3})?"
 		max_wait_time = "10s"
 	}
 
 	stage.regex {
-		expression = "^(?s)(?P<time>\\S+? \\S+?) (fail2ban\\.)(?P<component>\\S+)\\s* \\[(?P<pid>\\S+)\\]: (?P<detected_level>\\S+)\\s* (?P<message>.*?)$"
+		expression = "^(?s)(?P<time>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(?:,\\d{3})?)\\s+fail2ban\\.(?P<component>\\S+)\\s+\\[(?P<pid>\\d+)\\]:\\s+(?P<detected_level>\\S+)\\s+(?:\\[(?P<rule>[^\\]]+)\\]\\s+)?(?P<message>.*)$"
 	}
 
 	stage.timestamp {
@@ -219,8 +243,9 @@ loki.process "fail2ban" {
 
 	stage.labels {
 		values = {
-			component = null,
-			detected_level  = null,
+			component      = null,
+			detected_level = null,
+			rule           = null,
 		}
 	}
 
@@ -258,17 +283,17 @@ loki.process "fail2ban" {
 
 	stage.labels {
 		values = {
-			geoip_city_name          = "",
-			geoip_country_name       = "",
-			geoip_country_code       = "",
-			geoip_continent_name     = "",
-			geoip_continent_code     = "",
-			geoip_location_latitude  = "",
-			geoip_location_longitude = "",
-			geoip_postal_code        = "",
-			geoip_timezone           = "",
-			geoip_subdivision_name   = "",
-			geoip_subdivision_code   = "",
+			geoip_city_name          = null,
+			geoip_country_name       = null,
+			geoip_country_code       = null,
+			geoip_continent_name     = null,
+			geoip_continent_code     = null,
+			geoip_location_latitude  = null,
+			geoip_location_longitude = null,
+			geoip_postal_code        = null,
+			geoip_timezone           = null,
+			geoip_subdivision_name   = null,
+			geoip_subdivision_code   = null,
 		}
 	}
 
