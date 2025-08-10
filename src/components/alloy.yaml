@@ -20,7 +20,8 @@ services:
       - /etc/alloy/config.alloy
       - --storage.path=/var/lib/alloy/data
       - --server.http.listen-addr=0.0.0.0:12345
-      - --stability.level=experimental 
+      - --stability.level=experimental
+      # - --enable-feature=live-debugging,wasm,otlp-http,profiling,remote-config,component-reload,tempo-traces,fuzz-testing
     ports:
       - "12345:12345"
       - "5317:4317"         # OTLP gRPC

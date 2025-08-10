@@ -1,5 +1,11 @@
+livedebugging {
+  enabled = true
+}
+
+
 //------------------apache----------------------  https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-apache-http
 
+prometheus.exporter.self "integrations_apache_http_histogram" { }
 discovery.relabel "integrations_apache_http_histogram" {
 	targets = prometheus.exporter.self.alloy.targets
 
@@ -43,55 +49,11 @@ prometheus.scrape "integrations_apache_http" {
 	job_name   = "integrations/apache_http"
 }
 
-//------------------apache logs---------------------------------------------------------------------
-local.file_match "logs_integrations_integrations_apache_error" {
-	path_targets = [{
-		__address__ = "localhost",
-		__path__    = "/var/log/apache2/error.log",
-		instance    = constants.hostname,
-		job         = "integrations/apache_http",
-	}]
-}
 
-loki.process "logs_integrations_integrations_apache_error" {
-	forward_to = []
-
-	stage.regex {
-		expression = "^\\[[^ ]* (?P<timestamp>[^\\]]*)\\] \\[(?:(?P<module>[^:\\]]+):)?(?P<level>[^\\]]+)\\](?: \\[pid (?P<pid>[^\\]]*)\\])?(?: \\[client (?P<client>[^\\]]*)\\])? (?P<message>.*)$"
-	}
-
-	stage.labels {
-		values = {
-			level  = null,
-			module = null,
-		}
-	}
-
-	stage.static_labels {
-		values = {
-			job          = "apache_error",
-			service_name = "apache",
-			logtype      = "error",
-		}
-	}
-}
-
-loki.source.file "logs_integrations_integrations_apache_error" {
-	targets    = local.file_match.logs_integrations_integrations_apache_error.targets
-	forward_to = [loki.write.default.receiver]
-}
-
-local.file_match "logs_integrations_integrations_apache_access" {
-	path_targets = [{
-		__address__ = "localhost",
-		__path__    = "/var/log/apache2/access.log",
-		instance    = constants.hostname,
-		job         = "integrations/apache_http",
-	}]
-}
-
+//--------------------------------------------apache access logs ------------------------------------------------------------------------------
 loki.process "logs_integrations_integrations_apache_access" {
 	forward_to = [loki.write.default.receiver]
+	// forward_to = []
 
 	stage.regex {
 		expression = "^(?P<ip>[^ ]*) [^ ]* (?P<user>[^ ]*) \\[(?P<timestamp>[^\\]]*)\\] \"(?P<method>\\S+)(?: +(?P<path>[^ ]*) +\\S*)?\" (?P<code>[^ ]*) (?P<size>[^ ]*)(?: \"(?P<referer>[^\\\"]*)\" \"(?P<agent>.*)\")?$"
@@ -126,7 +88,54 @@ loki.source.file "logs_integrations_integrations_apache_access" {
 	targets    = local.file_match.logs_integrations_integrations_apache_access.targets
 	forward_to = [loki.process.logs_integrations_integrations_apache_access.receiver]
 }
+//------------------apache error logs---------------------------------------------------------------------
+local.file_match "logs_integrations_integrations_apache_error" {
+	path_targets = [{
+		__address__ = "localhost",
+		__path__    = "/var/log/apache2/error.log",
+		instance    = constants.hostname,
+		// instance    = "apache_web_server",
+		job         = "integrations/apache_http",
+	}]
+}
 
+loki.process "logs_integrations_integrations_apache_error" {
+	forward_to = [loki.write.default.receiver]
+	// forward_to = []
+	stage.regex {
+		expression = "^\\[[^ ]* (?P<timestamp>[^\\]]*)\\] \\[(?:(?P<module>[^:\\]]+):)?(?P<level>[^\\]]+)\\](?: \\[pid (?P<pid>[^\\]]*)\\])?(?: \\[client (?P<client>[^\\]]*)\\])? (?P<message>.*)$"
+	}
+
+	stage.labels {
+		values = {
+			level  = null,
+			module = null,
+		}
+	}
+
+	stage.static_labels {
+		values = {
+			job          = "apache_error",
+			service_name = "apache",
+			logtype      = "error",
+		}
+	}
+}
+
+loki.source.file "logs_integrations_integrations_apache_error" {
+	targets    = local.file_match.logs_integrations_integrations_apache_error.targets
+	forward_to = [loki.process.logs_integrations_integrations_apache_error.receiver]
+}
+
+local.file_match "logs_integrations_integrations_apache_access" {
+	path_targets = [{
+		__address__ = "localhost",
+		__path__    = "/var/log/apache2/access.log",
+		instance    = constants.hostname,
+		// instance    = "apache_web_server",
+		job         = "integrations/apache_http",
+	}]
+}
 //------------------ Apache end -----------------------------------
 
 //------------------ Modsecurity logs -----------------------------------

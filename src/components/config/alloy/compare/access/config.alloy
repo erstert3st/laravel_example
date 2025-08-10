@@ -1,0 +1,45 @@
+local.file_match "logs_integrations_integrations_apache_access" {
+	path_targets = [{
+		__address__ = "localhost",
+		__path__    = "/var/log/apache2/access.log",
+		instance    = constants.hostname,
+		job         = "integrations/apache_http",
+	}]
+}
+
+loki.process "logs_integrations_integrations_apache_access" {
+	forward_to = [loki.write.default.receiver]
+
+	stage.regex {
+		expression = "^(?P<ip>[^ ]*) [^ ]* (?P<user>[^ ]*) \\[(?P<timestamp>[^\\]]*)\\] \"(?P<method>\\S+)(?: +(?P<path>[^ ]*) +\\S*)?\" (?P<code>[^ ]*) (?P<size>[^ ]*)(?: \"(?P<referer>[^\\\"]*)\" \"(?P<agent>.*)\")?$"
+	}
+
+	stage.metrics {
+		metric.histogram {
+			name        = "response_http_codes"
+			description = "Apache responses by HTTP codes"
+			source      = "code"
+			prefix      = "apache_"
+			buckets     = [199, 299, 399, 499, 599]
+		}
+	}
+
+	stage.static_labels {
+		values = {
+			job          = "apache_access",
+			service_name = "apache",
+			logtype      = "access",
+		}
+	}
+
+	stage.labels {
+		values = {
+			method = null,
+		}
+	}
+}
+
+loki.source.file "logs_integrations_integrations_apache_access" {
+	targets    = local.file_match.logs_integrations_integrations_apache_access.targets
+	forward_to = [loki.process.logs_integrations_integrations_apache_access.receiver]
+}

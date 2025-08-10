@@ -1,0 +1,38 @@
+
+//------------------apache logs---------------------------------------------------------------------
+local.file_match "logs_integrations_integrations_apache_error" {
+	path_targets = [{
+		__address__ = "localhost",
+		__path__    = "/var/log/apache2/error.log",
+		instance    = constants.hostname,
+		job         = "integrations/apache_http",
+	}]
+}
+
+loki.process "logs_integrations_integrations_apache_error" {
+	forward_to = [loki.write.default.receiver]
+	// forward_to = []
+	stage.regex {
+		expression = "^\\[[^ ]* (?P<timestamp>[^\\]]*)\\] \\[(?:(?P<module>[^:\\]]+):)?(?P<level>[^\\]]+)\\](?: \\[pid (?P<pid>[^\\]]*)\\])?(?: \\[client (?P<client>[^\\]]*)\\])? (?P<message>.*)$"
+	}
+
+	stage.labels {
+		values = {
+			level  = null,
+			module = null,
+		}
+	}
+
+	stage.static_labels {
+		values = {
+			job          = "apache_error",
+			service_name = "apache",
+			logtype      = "error",
+		}
+	}
+}
+
+loki.source.file "logs_integrations_integrations_apache_error" {
+	targets    = local.file_match.logs_integrations_integrations_apache_error.targets
+	forward_to = [loki.write.logs_integrations_integrations_apache_error.receiver]
+}
