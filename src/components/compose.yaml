@@ -2,8 +2,8 @@ name: alloy-main
 volumes:
   apache-logs:
   modsec-logs:
-  fail2ban-logs:
   geoip:
+  # fail2ban-logs:
 include:
   - ./grafana.yaml
   - ./databases.yaml

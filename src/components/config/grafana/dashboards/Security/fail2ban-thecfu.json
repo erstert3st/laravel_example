@@ -85,7 +85,7 @@
           "showThresholdMarkers": true,
           "sizing": "auto"
         },
-        "pluginVersion": "12.2.0-16636675413",
+        "pluginVersion": "12.2.0-16818804881",
         "targets": [
           {
             "datasource": {
@@ -189,13 +189,14 @@
             "zoom": 2
           }
         },
-        "pluginVersion": "12.2.0-16636675413",
+        "pluginVersion": "12.2.0-16818804881",
         "targets": [
           {
             "datasource": {
               "type": "loki",
               "uid": "P8E80F9AEF21F6940"
             },
+            "direction": "backward",
             "editorMode": "builder",
             "expr": "{job=\"$job\"} |= ``",
             "queryType": "range",
@@ -297,7 +298,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.2.0-16636675413",
+        "pluginVersion": "12.2.0-16818804881",
         "targets": [
           {
             "datasource": {
@@ -375,7 +376,7 @@
           "textMode": "auto",
           "wideLayout": true
         },
-        "pluginVersion": "12.2.0-16636675413",
+        "pluginVersion": "12.2.0-16818804881",
         "targets": [
           {
             "datasource": {
@@ -410,32 +411,7 @@
           "uid": "${lokiInstance}"
         },
         "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "cellOptions": {
-                "type": "auto"
-              },
-              "inspect": false
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
-          },
+          "defaults": {},
           "overrides": []
         },
         "gridPos": {
@@ -444,54 +420,111 @@
           "x": 0,
           "y": 18
         },
-        "id": 6,
+        "id": 11,
         "options": {
-          "cellHeight": "sm",
-          "footer": {
-            "countRows": false,
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true
+          "dedupStrategy": "none",
+          "enableInfiniteScrolling": false,
+          "enableLogDetails": true,
+          "prettifyLogMessage": true,
+          "showCommonLabels": false,
+          "showLabels": false,
+          "showTime": true,
+          "sortOrder": "Descending",
+          "wrapLogMessage": false
         },
-        "pluginVersion": "12.2.0-16636675413",
+        "pluginVersion": "12.2.0-16818804881",
         "targets": [
           {
             "datasource": {
               "type": "loki",
               "uid": "P8E80F9AEF21F6940"
             },
+            "direction": "backward",
             "editorMode": "builder",
-            "expr": "{job=\"$job\"} | priority = `ERROR`",
+            "expr": "{job=\"$job\"} | detected_level = `ERROR`",
             "queryType": "range",
             "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "${lokiInstance}"
+            },
+            "direction": "backward",
+            "editorMode": "builder",
+            "expr": "{job=\"$job\"} | detected_level = `WARNING`",
+            "hide": true,
+            "queryType": "range",
+            "refId": "B"
           }
         ],
-        "title": "Error",
+        "title": "Fail2Ban Error Logs",
         "transformations": [
           {
+            "id": "extractFields",
+            "options": {
+              "delimiter": ",",
+              "source": "labels"
+            }
+          },
+          {
+            "disabled": true,
             "id": "organize",
             "options": {
               "excludeByName": {
+                "Time": false,
+                "TraceID": true,
+                "component": false,
+                "detected_level": false,
+                "geoip_city_name": true,
+                "geoip_continent_code": true,
+                "geoip_continent_name": true,
+                "geoip_country_code": true,
+                "geoip_country_name": true,
+                "geoip_location_latitude": true,
+                "geoip_location_longitude": true,
+                "geoip_postal_code": true,
+                "geoip_subdivision_code": true,
+                "geoip_subdivision_name": true,
+                "geoip_timezone": true,
                 "id": true,
+                "job": true,
                 "labelTypes": true,
-                "labels": true,
+                "labels": false,
+                "service_name": true,
                 "tsNs": true
               },
               "includeByName": {},
-              "indexByName": {},
-              "renameByName": {
-                "Line": "Message",
-                "labelTypes": "",
-                "tsNs": ""
-              }
+              "indexByName": {
+                "Line": 1,
+                "Time": 0,
+                "TraceID": 9,
+                "component": 2,
+                "detected_level": 3,
+                "geoip_city_name": 12,
+                "geoip_continent_code": 13,
+                "geoip_continent_name": 14,
+                "geoip_country_code": 15,
+                "geoip_country_name": 16,
+                "geoip_location_latitude": 17,
+                "geoip_location_longitude": 18,
+                "geoip_postal_code": 19,
+                "geoip_subdivision_code": 20,
+                "geoip_subdivision_name": 21,
+                "geoip_timezone": 22,
+                "id": 10,
+                "job": 7,
+                "labelTypes": 5,
+                "labels": 4,
+                "service_name": 11,
+                "tsNs": 8
+              },
+              "orderByMode": "manual",
+              "renameByName": {}
             }
           }
         ],
-        "type": "table"
+        "type": "logs"
       },
       {
         "datasource": {
@@ -499,32 +532,7 @@
           "uid": "${lokiInstance}"
         },
         "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "cellOptions": {
-                "type": "auto"
-              },
-              "inspect": false
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
-          },
+          "defaults": {},
           "overrides": []
         },
         "gridPos": {
@@ -533,26 +541,148 @@
           "x": 12,
           "y": 18
         },
-        "id": 1,
+        "id": 9,
         "options": {
-          "cellHeight": "sm",
-          "footer": {
-            "countRows": false,
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true
+          "dedupStrategy": "none",
+          "enableInfiniteScrolling": false,
+          "enableLogDetails": true,
+          "prettifyLogMessage": true,
+          "showCommonLabels": false,
+          "showLabels": false,
+          "showTime": true,
+          "sortOrder": "Descending",
+          "wrapLogMessage": false
         },
-        "pluginVersion": "12.2.0-16636675413",
+        "pluginVersion": "12.2.0-16818804881",
         "targets": [
           {
             "datasource": {
               "type": "loki",
               "uid": "P8E80F9AEF21F6940"
             },
+            "direction": "backward",
+            "editorMode": "builder",
+            "expr": "{job=\"$job\"} | detected_level = `ERROR`",
+            "hide": true,
+            "queryType": "range",
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "${lokiInstance}"
+            },
+            "direction": "backward",
+            "editorMode": "builder",
+            "expr": "{job=\"$job\"} | detected_level = `WARNING`",
+            "hide": false,
+            "queryType": "range",
+            "refId": "B"
+          }
+        ],
+        "title": "Fail2Ban Warning Logs",
+        "transformations": [
+          {
+            "id": "extractFields",
+            "options": {
+              "delimiter": ",",
+              "source": "labels"
+            }
+          },
+          {
+            "disabled": true,
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": false,
+                "TraceID": true,
+                "component": false,
+                "detected_level": false,
+                "geoip_city_name": true,
+                "geoip_continent_code": true,
+                "geoip_continent_name": true,
+                "geoip_country_code": true,
+                "geoip_country_name": true,
+                "geoip_location_latitude": true,
+                "geoip_location_longitude": true,
+                "geoip_postal_code": true,
+                "geoip_subdivision_code": true,
+                "geoip_subdivision_name": true,
+                "geoip_timezone": true,
+                "id": true,
+                "job": true,
+                "labelTypes": true,
+                "labels": false,
+                "service_name": true,
+                "tsNs": true
+              },
+              "includeByName": {},
+              "indexByName": {
+                "Line": 1,
+                "Time": 0,
+                "TraceID": 9,
+                "component": 2,
+                "detected_level": 3,
+                "geoip_city_name": 12,
+                "geoip_continent_code": 13,
+                "geoip_continent_name": 14,
+                "geoip_country_code": 15,
+                "geoip_country_name": 16,
+                "geoip_location_latitude": 17,
+                "geoip_location_longitude": 18,
+                "geoip_postal_code": 19,
+                "geoip_subdivision_code": 20,
+                "geoip_subdivision_name": 21,
+                "geoip_timezone": 22,
+                "id": 10,
+                "job": 7,
+                "labelTypes": 5,
+                "labels": 4,
+                "service_name": 11,
+                "tsNs": 8
+              },
+              "orderByMode": "manual",
+              "renameByName": {}
+            }
+          }
+        ],
+        "type": "logs"
+      },
+      {
+        "datasource": {
+          "type": "loki",
+          "uid": "${lokiInstance}"
+        },
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 26
+        },
+        "id": 10,
+        "options": {
+          "dedupStrategy": "none",
+          "enableInfiniteScrolling": false,
+          "enableLogDetails": true,
+          "prettifyLogMessage": true,
+          "showCommonLabels": false,
+          "showLabels": false,
+          "showTime": true,
+          "sortOrder": "Descending",
+          "wrapLogMessage": false
+        },
+        "pluginVersion": "12.2.0-16818804881",
+        "targets": [
+          {
+            "datasource": {
+              "type": "loki",
+              "uid": "P8E80F9AEF21F6940"
+            },
+            "direction": "backward",
             "editorMode": "builder",
             "expr": "{job=\"$job\"} |= ``",
             "queryType": "range",
@@ -562,20 +692,69 @@
         "title": "Fail2Ban Log",
         "transformations": [
           {
+            "id": "extractFields",
+            "options": {
+              "delimiter": ",",
+              "source": "labels"
+            }
+          },
+          {
             "id": "organize",
             "options": {
               "excludeByName": {
+                "Time": false,
+                "TraceID": true,
+                "component": false,
+                "detected_level": false,
+                "geoip_city_name": true,
+                "geoip_continent_code": true,
+                "geoip_continent_name": true,
+                "geoip_country_code": true,
+                "geoip_country_name": true,
+                "geoip_location_latitude": true,
+                "geoip_location_longitude": true,
+                "geoip_postal_code": true,
+                "geoip_subdivision_code": true,
+                "geoip_subdivision_name": true,
+                "geoip_timezone": true,
                 "id": true,
-                "labels": true,
+                "job": true,
+                "labelTypes": true,
+                "labels": false,
+                "service_name": true,
                 "tsNs": true
               },
               "includeByName": {},
-              "indexByName": {},
+              "indexByName": {
+                "Line": 1,
+                "Time": 0,
+                "TraceID": 9,
+                "component": 2,
+                "detected_level": 3,
+                "geoip_city_name": 12,
+                "geoip_continent_code": 13,
+                "geoip_continent_name": 14,
+                "geoip_country_code": 15,
+                "geoip_country_name": 16,
+                "geoip_location_latitude": 17,
+                "geoip_location_longitude": 18,
+                "geoip_postal_code": 19,
+                "geoip_subdivision_code": 20,
+                "geoip_subdivision_name": 21,
+                "geoip_timezone": 22,
+                "id": 10,
+                "job": 7,
+                "labelTypes": 5,
+                "labels": 4,
+                "service_name": 11,
+                "tsNs": 8
+              },
+              "orderByMode": "manual",
               "renameByName": {}
             }
           }
         ],
-        "type": "table"
+        "type": "logs"
       }
     ],
     "preload": false,
@@ -586,10 +765,10 @@
         {
           "current": {
             "text": [
-              "All"
+              "Loki"
             ],
             "value": [
-              "$__all"
+              "P8E80F9AEF21F6940"
             ]
           },
           "includeAll": true,
@@ -604,8 +783,8 @@
         },
         {
           "current": {
-            "text": "integrations/self",
-            "value": "integrations/self"
+            "text": "fail2ban",
+            "value": "fail2ban"
           },
           "datasource": {
             "type": "loki",
@@ -628,7 +807,7 @@
       ]
     },
     "time": {
-      "from": "now-6h",
+      "from": "now-3h",
       "to": "now"
     },
     "timepicker": {},

@@ -30,11 +30,15 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [x] add failToBan
 - [x] add "normal apache"
 - [x] fix all broken things
-- [ ] trigger failban
-- [ ] failToBan configure right
-- [ ] failToBan testing
-- [ ] failToBan dashboards
-- [ ] failToBan exporter | alloy
+- [x] trigger failban
+- [x] failToBan configure right
+- [x] failToBan testing
+- [x] failToBan dashboards
+- [x] failToBan exporter | alloy
+- [ ] cleanup dashboards 
+    - [x] failtoban  
+    - [x] add apachae logs  
+    - [ ] apache  
 - [ ] add HealthCheck to all
 - [ ] add failToBan Dashboard
 - [ ] add Other Dashboard from weird Spanish dude
