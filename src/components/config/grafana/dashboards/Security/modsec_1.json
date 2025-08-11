@@ -621,31 +621,18 @@
             },
             "mappings": [],
             "thresholds": {
-              "mode": "percentage",
+              "mode": "absolute",
               "steps": [
                 {
                   "color": "green",
                   "value": 0
                 },
                 {
-                  "color": "#6ED0E0",
-                  "value": 20
-                },
-                {
-                  "color": "#EAB839",
-                  "value": 60
-                },
-                {
-                  "color": "#EF843C",
-                  "value": 70
-                },
-                {
-                  "color": "#E24D42",
+                  "color": "red",
                   "value": 80
                 }
               ]
-            },
-            "unit": "short"
+            }
           },
           "overrides": []
         },
@@ -655,7 +642,7 @@
           "x": 0,
           "y": 24
         },
-        "id": 8,
+        "id": 11,
         "options": {
           "basemap": {
             "config": {},
@@ -673,59 +660,22 @@
           "layers": [
             {
               "config": {
-                "showLegend": true,
-                "style": {
-                  "color": {
-                    "field": "Count",
-                    "fixed": "dark-green"
-                  },
-                  "opacity": 0.4,
-                  "rotation": {
-                    "fixed": 0,
-                    "max": 360,
-                    "min": -360,
-                    "mode": "mod"
-                  },
-                  "size": {
-                    "field": "Count",
-                    "fixed": 5,
-                    "max": 8,
-                    "min": 2
-                  },
-                  "symbol": {
-                    "fixed": "img/icons/marker/x-mark.svg",
-                    "mode": "fixed"
-                  },
-                  "symbolAlign": {
-                    "horizontal": "center",
-                    "vertical": "center"
-                  },
-                  "text": {
-                    "field": "Count",
-                    "fixed": "",
-                    "mode": "field"
-                  },
-                  "textConfig": {
-                    "fontSize": 12,
-                    "offsetX": 7,
-                    "offsetY": 0,
-                    "textAlign": "left",
-                    "textBaseline": "middle"
-                  }
+                "blur": 15,
+                "radius": 5,
+                "weight": {
+                  "fixed": 1,
+                  "max": 1,
+                  "min": 0
                 }
               },
-              "filterData": {
-                "id": "byRefId",
-                "options": "A"
-              },
               "location": {
-                "gazetteer": "public/gazetteer/countries.json",
-                "lookup": "Field",
-                "mode": "lookup"
+                "latitude": "geoip_location_latitude",
+                "longitude": "geoip_location_longitude",
+                "mode": "coords"
               },
-              "name": "Hits",
+              "name": "Layer 1",
               "tooltip": true,
-              "type": "markers"
+              "type": "heatmap"
             }
           ],
           "tooltip": {
@@ -734,10 +684,10 @@
           "view": {
             "allLayers": true,
             "id": "coords",
-            "lat": 40.164528,
-            "lon": -14.352344,
+            "lat": 24.948855,
+            "lon": 5.804702,
             "noRepeat": false,
-            "zoom": 1.97
+            "zoom": 2
           }
         },
         "pluginVersion": "12.2.0-16818804881",
@@ -748,27 +698,67 @@
               "uid": "P8E80F9AEF21F6940"
             },
             "direction": "backward",
-            "editorMode": "code",
-            "expr": "sum by (request_headers_Cf_Ipcountry)\r\n(count_over_time({job=\"modsec\"}  | json [$__interval]))",
+            "editorMode": "builder",
+            "expr": "{job=\"modsec\"}",
             "queryType": "range",
             "refId": "A"
           }
         ],
-        "title": "GeoMap Locations",
+        "title": "Geomap",
         "transformations": [
           {
-            "id": "prepareTimeSeries",
+            "id": "extractFields",
             "options": {
-              "format": "multi"
+              "delimiter": ",",
+              "format": "json",
+              "source": "labels"
             }
           },
           {
-            "id": "reduce",
+            "disabled": true,
+            "id": "convertFieldType",
             "options": {
-              "labelsToFields": false,
-              "reducers": [
-                "count"
-              ]
+              "conversions": [
+                {
+                  "destinationType": "number",
+                  "targetField": "geoip_location_latitude"
+                },
+                {
+                  "destinationType": "number",
+                  "targetField": "geoip_location_longitude"
+                }
+              ],
+              "fields": {}
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Line": true,
+                "Time": true,
+                "TraceID": true,
+                "app": true,
+                "detected_level": true,
+                "env": true,
+                "filename": true,
+                "geoip_continent_code": true,
+                "geoip_continent_name": true,
+                "geoip_country_code": true,
+                "geoip_country_name": true,
+                "geoip_timezone": true,
+                "id": true,
+                "instance": true,
+                "job": true,
+                "labelTypes": true,
+                "labels": true,
+                "remote_address": true,
+                "service_name": true,
+                "tsNs": true
+              },
+              "includeByName": {},
+              "indexByName": {},
+              "renameByName": {}
             }
           }
         ],

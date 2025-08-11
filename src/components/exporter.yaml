@@ -2,7 +2,7 @@ services:
 #https://github.com/hipages/php-fpm_exporter
   phpfpmexporter:
     build:
-      context: ../images
+      context: ../images/exporter-php
       dockerfile: Dockerfile
     image: own/php-fpm_exporter:latest
     container_name: phpfpmexporter

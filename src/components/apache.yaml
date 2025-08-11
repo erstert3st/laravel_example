@@ -32,8 +32,8 @@ services:
       - APACHE_LOG_LEVEL=INFO
       - SMTP_LOG=/var/log/smtp.log
       - PHP_LISTEN=0.0.0.0:9000 
-      - PHP_ACCESS_LOG=/var/log/php-fpm.log
-      - PHP_ERROR_LOG=/var/log/php-fpm.error.log
+      - PHP_ACCESS_LOG=/var/log/apache2/php-fpm-access.log
+      - PHP_ERROR_LOG=/var/log/apache2/php-fpm.error.log
       - PHP_FASTCGI_LOGGING=Off
       - PHP_LOG_LEVEL=notice
       - PHP_MAIL_LOG=/var/log/apache2/php-mail.log

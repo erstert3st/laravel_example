@@ -166,6 +166,12 @@ loki.process "modsecurity_logs" {
 
 	stage.json {
 		expressions = {
+			remote_address = "transaction.remote_address",
+		}
+	}
+
+	stage.json {
+		expressions = {
 			request = "transaction",
 		}
 	}
@@ -187,31 +193,52 @@ loki.process "modsecurity_logs" {
 			Host = null,
 		}
 	}
+
 	stage.geoip {
 		db      = "/geoip/GeoLite2-City.mmdb"
-		source  = "transaction_remote_address"
+		source  = "remote_address"
 		db_type = "city"
 	}
 
 	stage.labels {
 		values = {
-			transaction_remote_address = null,
+			remote_address           = null,
 			geoip_city_name          = null,
-			geoip_country_name       = null,
-			geoip_country_code       = null,
-			geoip_continent_name     = null,
-			geoip_continent_code     = null,
-			geoip_location_latitude  = null,
-			geoip_location_longitude = null,
-			geoip_postal_code        = null,
-			geoip_timezone           = null,
-			geoip_subdivision_name   = null,
-			geoip_subdivision_code   = null,
+			geoip_country_name       = "",
+			geoip_country_code       = "",
+			geoip_continent_name     = "",
+			geoip_continent_code     = "",
+			geoip_location_latitude  = "",
+			geoip_location_longitude = "",
+			geoip_postal_code        = "",
+			geoip_timezone           = "",
+			geoip_subdivision_name   = "",
+			geoip_subdivision_code   = "",
 		}
 	}
 
-
+	stage.label_drop {
+		values = ["geoip_subdivision_name",
+			"response_headers_Content_Length",
+			"filename",
+			"audit_data_stopwatch_gc",
+			"audit_data_stopwatch_l",
+			"audit_data_stopwatch_p1",
+			"audit_data_stopwatch_p2",
+			"audit_data_stopwatch_p3",
+			"audit_data_stopwatch_p4",
+			"audit_data_stopwatch_p5",
+			"audit_data_stopwatch_sr",
+			"audit_data_stopwatch_sw",
+			"audit_data_action_phase",
+			"audit_data_engine_mode",
+			"audit_data_response_body_dechunked",
+			// "remote_address"
+		]
+	}
 }
+
+
 //------------------ Modsecurity logs end -----------------------------
 //
 //------------------ Fail2Ban logs -----------------------------------

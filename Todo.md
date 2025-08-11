@@ -24,7 +24,8 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
     - [ ] Migrate FPM to other image with Healthcheck
     - [ ] fix php-exporter
 - [ ] add autoload dashboard and dbs ->  cat get working for now on iac...
-- [ ] fix arch container 
+- [x] fix arch container 
+    - [x] archi fix zsh plugins 
 - [x] grafana remove json shit
 - [x] learn and init provisioning
 - [] make all important things to volumes
@@ -36,10 +37,11 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [x] failToBan testing
 - [x] failToBan dashboards
 - [x] failToBan exporter | alloy
-- [ ] cleanup dashboards 
+- [x] cleanup healthcheck from logs | alloy
+- [x] cleanup dashboards 
     - [x] failtoban  
     - [x] add apachae logs  
-    - [ ] apache  
+    - [x] apache  
 - [ ] add HealthCheck to all
 - [ ] add failToBan Dashboard
 - [ ] add Other Dashboard from weird Spanish dude

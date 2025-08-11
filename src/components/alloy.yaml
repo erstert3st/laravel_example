@@ -29,7 +29,8 @@ services:
     volumes:
       - ./config/alloy:/etc/alloy
       - ../../.data/apache:/var/log/apache2
-      - modsec-logs:/var/log/modsec
+      # - modsec-logs:/var/log/modsec
+      - /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log:/var/log/modsec/modsec_audit.log
       - ../../.data/fail2ban:/var/log/fail2ban
       - geoip:/geoip
     develop:
@@ -37,7 +38,7 @@ services:
         - path: ./config/alloy
           action: restart
 
-
+# /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log
 
 
 

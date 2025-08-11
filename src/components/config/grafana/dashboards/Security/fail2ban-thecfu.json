@@ -2,7 +2,7 @@
   "apiVersion": "dashboard.grafana.app/v1beta1",
   "kind": "Dashboard",
   "metadata": {
-    "name": "ceaqs1fih7uo0b"
+    "name": "ceaqs1fih7uo0bmin"
   },
   "spec": {
     "annotations": {
@@ -1244,6 +1244,6 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "Fail2ban by TheCfU"
+    "title": "Fail2ban by TheCfU mine"
   }
 }

@@ -24,9 +24,9 @@ services:
       - apache
 
   #################  Testing  ################################  Testing  #########################
-  testing:
-    image: nicolaka/netshoot:v0.13
-    container_name: testing
+  archi:
+    image: local/archi:latest
+    container_name: archi
     depends_on:
       - modsecurity-waf
     entrypoint: ["sleep", "infinity"]
