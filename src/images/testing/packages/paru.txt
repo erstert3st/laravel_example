@@ -1,0 +1,15 @@
+exa
+fd-find
+gh
+go-jsonnet
+grafana-alloy-bin
+jsonnet-bundler
+kubecolor
+openssh-server
+poppler-utils
+software-properties-common
+ttf-victor-mono
+unar
+
+
+#cat paru.txt | tr '\n' ' '

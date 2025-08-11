@@ -24,6 +24,7 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
     - [ ] Migrate FPM to other image with Healthcheck
     - [ ] fix php-exporter
 - [ ] add autoload dashboard and dbs ->  cat get working for now on iac...
+- [ ] fix arch container 
 - [x] grafana remove json shit
 - [x] learn and init provisioning
 - [] make all important things to volumes
