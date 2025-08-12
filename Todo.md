@@ -43,12 +43,13 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
     - [x] add apachae logs  
     - [x] apache  
 - [ ] add HealthCheck to all
-- [ ] add failToBan Dashboard
-- [ ] add Other Dashboard from weird Spanish dude
-- [ ] add Other Tool Dashboard from weird Spanish dude
+- [x] add failToBan Dashboard
+- [~] add loki logs
+- [~] add alloy logs
+- [~] add mimir logs
 - [ ] docker prometheus exporter 
-- [ ] docker monitoring
-- [ ] docker service discovery
+- [~] docker monitoring
+- [x] docker service discovery
 - [ ] switch to podman  
 
 ~~add optional saving to git~~

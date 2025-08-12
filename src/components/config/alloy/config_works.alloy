@@ -1,11 +1,151 @@
+livedebugging {
+	enabled = true
+}
+
+//------------------apache----------------------  https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-apache-http
+
+prometheus.exporter.self "integrations_apache_http_histogram" { }
+
+discovery.relabel "integrations_apache_http_histogram" {
+	targets = prometheus.exporter.self.alloy.targets
+
+	rule {
+		replacement  = "integrations/apache_http"
+		target_label = "job"
+	}
+
+	rule {
+		source_labels = ["exported_instance"]
+		target_label  = "instance" // may change that ^ŝ
+	}
+}
+
+prometheus.scrape "integrations_apache_http_histogram" {
+	targets    = discovery.relabel.integrations_apache_http_histogram.output
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.exporter.apache "integrations_apache_http" {
+	scrape_uri = "http://apache:80/server-status?auto"
+}
+
+discovery.relabel "integrations_apache_http" {
+	targets = prometheus.exporter.apache.integrations_apache_http.targets
+
+	rule {
+		target_label = "instance"
+		replacement  = constants.hostname
+	}
+
+	rule {
+		target_label = "job"
+		replacement  = "integrations/apache_http"
+	}
+}
+
+prometheus.scrape "integrations_apache_http" {
+	targets    = discovery.relabel.integrations_apache_http.output
+	forward_to = [prometheus.remote_write.mimir.receiver]
+	job_name   = "integrations/apache_http"
+}
+
+//--------------------------------------------apache access logs ------------------------------------------------------------------------------
+loki.process "logs_integrations_integrations_apache_access" {
+	forward_to = [loki.write.default.receiver]
+	// forward_to = []
+
+	stage.regex {
+		expression = "^(?P<ip>[^ ]*) [^ ]* (?P<user>[^ ]*) \\[(?P<timestamp>[^\\]]*)\\] \"(?P<method>\\S+)(?: +(?P<path>[^ ]*) +\\S*)?\" (?P<code>[^ ]*) (?P<size>[^ ]*)(?: \"(?P<referer>[^\\\"]*)\" \"(?P<agent>.*)\")?$"
+	}
+
+	stage.metrics {
+		metric.histogram {
+			name        = "response_http_codes"
+			description = "Apache responses by HTTP codes"
+			source      = "code"
+			prefix      = "apache_"
+			buckets     = [199, 299, 399, 499, 599]
+		}
+	}
+
+	stage.static_labels {
+		values = {
+			job            = "apache_access",
+			service_name   = "apache",
+			logtype        = "access",
+			detected_level = "INFO",
+		}
+	}
+
+	stage.labels {
+		values = {
+			method = null,
+		}
+	}
+}
+
+loki.source.file "logs_integrations_integrations_apache_access" {
+	targets    = local.file_match.logs_integrations_integrations_apache_access.targets
+	forward_to = [loki.process.logs_integrations_integrations_apache_access.receiver]
+}
+//------------------apache error logs---------------------------------------------------------------------
+local.file_match "logs_integrations_integrations_apache_error" {
+	path_targets = [{
+		__address__ = "localhost",
+		__path__    = "/var/log/apache2/error.log",
+		instance    = constants.hostname,
+		// instance    = "apache_web_server",
+		job = "apache_http",
+	}]
+}
+
+loki.process "logs_integrations_integrations_apache_error" {
+	forward_to = [loki.write.default.receiver]
+	// forward_to = []
+	stage.regex {
+		expression = "^\\[[^ ]* (?P<timestamp>[^\\]]*)\\] \\[(?:(?P<module>[^:\\]]+):)?(?P<level>[^\\]]+)\\](?: \\[pid (?P<pid>[^\\]]*)\\])?(?: \\[client (?P<client>[^\\]]*)\\])? (?P<message>.*)$"
+	}
+
+	stage.labels {
+		values = {
+			level  = null,
+			module = null,
+		}
+	}
+
+	stage.static_labels {
+		values = {
+			job          = "apache_error",
+			service_name = "apache",
+			logtype      = "error",
+		}
+	}
+}
+
+loki.source.file "logs_integrations_integrations_apache_error" {
+	targets    = local.file_match.logs_integrations_integrations_apache_error.targets
+	forward_to = [loki.process.logs_integrations_integrations_apache_error.receiver]
+}
+
+local.file_match "logs_integrations_integrations_apache_access" {
+	path_targets = [{
+		__address__ = "localhost",
+		__path__    = "/var/log/apache2/access.log",
+		instance    = constants.hostname,
+		// instance    = "apache_web_server",
+		job = "apache_http",
+	}]
+}
+//------------------ Apache end -----------------------------------
+
 //------------------ Modsecurity logs -----------------------------------
 loki.source.file "modsecurity_logs" {
 	targets = [
 		{__path__ = "/var/log/modsec/modsec_audit.log",
-				job      = "modsec",
-				app      = "fail2ban",
-				env      = "test-env",
-				instance = "your-instance-identifier"}, //dont touch this line!
+				job      = "modsecurity",
+				app      = "modsecurity",
+				env      = "env",
+				instance = "modsecurity"}, //dont touch this line!
 	]
 	forward_to = [loki.process.modsecurity_logs.receiver]
 }
@@ -22,6 +162,12 @@ loki.process "modsecurity_logs" {
 
 	stage.tenant {
 		value = "sysmid-sensitive"
+	}
+
+	stage.json {
+		expressions = {
+			remote_address = "transaction.remote_address",
+		}
 	}
 
 	stage.json {
@@ -47,14 +193,59 @@ loki.process "modsecurity_logs" {
 			Host = null,
 		}
 	}
+
+	stage.geoip {
+		db      = "/geoip/GeoLite2-City.mmdb"
+		source  = "remote_address"
+		db_type = "city"
+	}
+
+	stage.labels {
+		values = {
+			remote_address           = null,
+			geoip_city_name          = null,
+			geoip_country_name       = "",
+			geoip_country_code       = "",
+			geoip_continent_name     = "",
+			geoip_continent_code     = "",
+			geoip_location_latitude  = "",
+			geoip_location_longitude = "",
+			geoip_postal_code        = "",
+			geoip_timezone           = "",
+			geoip_subdivision_name   = "",
+			geoip_subdivision_code   = "",
+		}
+	}
+
+	stage.label_drop {
+		values = ["geoip_subdivision_name",
+			"response_headers_Content_Length",
+			"filename",
+			"audit_data_stopwatch_gc",
+			"audit_data_stopwatch_l",
+			"audit_data_stopwatch_p1",
+			"audit_data_stopwatch_p2",
+			"audit_data_stopwatch_p3",
+			"audit_data_stopwatch_p4",
+			"audit_data_stopwatch_p5",
+			"audit_data_stopwatch_sr",
+			"audit_data_stopwatch_sw",
+			"audit_data_action_phase",
+			"audit_data_engine_mode",
+			"audit_data_response_body_dechunked",
+			// "remote_address"
+		]
+	}
 }
+
+
 //------------------ Modsecurity logs end -----------------------------
 //
 //------------------ Fail2Ban logs -----------------------------------
 
 loki.source.file "fail2ban" {
 	targets = [
-		{__path__ = "/var/log/fail2ban.log",
+		{__path__ = "/var/log/fail2ban/fail2ban.log",
 				job = "fail2ban"},
 	]
 	forward_to = [loki.process.fail2ban.receiver]
@@ -64,12 +255,12 @@ loki.process "fail2ban" {
 	forward_to = [loki.write.default.receiver]
 
 	stage.multiline {
-		firstline     = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
+		firstline     = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(?:,\\d{3})?"
 		max_wait_time = "10s"
 	}
 
 	stage.regex {
-		expression = "^(?s)(?P<time>\\S+? \\S+?) (fail2ban\\.)(?P<component>\\S+)\\s* \\[(?P<pid>\\S+)\\]: (?P<priority>\\S+)\\s* (?P<message>.*?)$"
+		expression = "^(?s)(?P<time>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(?:,\\d{3})?)\\s+fail2ban\\.(?P<component>\\S+)\\s+\\[(?P<pid>\\d+)\\]:\\s+(?P<detected_level>\\S+)\\s+(?:\\[(?P<rule>[^\\]]+)\\]\\s+)?(?P<message>.*)$"
 	}
 
 	stage.timestamp {
@@ -79,8 +270,9 @@ loki.process "fail2ban" {
 
 	stage.labels {
 		values = {
-			component = null,
-			priority  = null,
+			component      = null,
+			detected_level = null,
+			rule           = null,
 		}
 	}
 
@@ -118,17 +310,17 @@ loki.process "fail2ban" {
 
 	stage.labels {
 		values = {
-			geoip_city_name          = "",
-			geoip_country_name       = "",
-			geoip_country_code       = "",
-			geoip_continent_name     = "",
-			geoip_continent_code     = "",
-			geoip_location_latitude  = "",
-			geoip_location_longitude = "",
-			geoip_postal_code        = "",
-			geoip_timezone           = "",
-			geoip_subdivision_name   = "",
-			geoip_subdivision_code   = "",
+			geoip_city_name          = null,
+			geoip_country_name       = null,
+			geoip_country_code       = null,
+			geoip_continent_name     = null,
+			geoip_continent_code     = null,
+			geoip_location_latitude  = null,
+			geoip_location_longitude = null,
+			geoip_postal_code        = null,
+			geoip_timezone           = null,
+			geoip_subdivision_name   = null,
+			geoip_subdivision_code   = null,
 		}
 	}
 
@@ -218,11 +410,16 @@ prometheus.scrape "apacheexporter" {
 
 prometheus.scrape "phpfpmexporter" {
 	targets = [
-		{"__address__" = "phpfpmexporter:9253", "job" = "phpfpm"},
+		{__address__ = "phpfpmexporter:9253",
+				__metrics_path__ = "/metrics",
+				"job"            = "phpfpm",
+		},
 	]
+
 	forward_to      = [prometheus.remote_write.mimir.receiver]
 	scrape_interval = "15s"
 }
+
 // ----------------- scraper end -----------------------------------
 
 // ----------------- OpenTelemetry logs start -----------------------------------
