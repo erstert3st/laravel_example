@@ -2,6 +2,121 @@ livedebugging {
 	enabled = true
 }
 
+//--------------------syslogs-nodeexporter-----------
+
+discovery.relabel "integrations_node_exporter" {
+	targets = prometheus.exporter.unix.integrations_node_exporter.targets
+
+	rule {
+		// Set the instance label to the hostname of the machine
+		target_label = "instance"
+		replacement  = constants.hostname
+	}
+
+	rule {
+		// Set a standard job name for all node_exporter metrics
+		target_label = "job"
+		replacement  = "node_exporter"
+	}
+}
+
+prometheus.exporter.unix "integrations_node_exporter" {
+	// Disable unnecessary collectors to reduce overhead
+	disable_collectors = ["ipvs", "btrfs", "infiniband", "xfs", "zfs"]
+	enable_collectors  = ["meminfo"]
+
+	filesystem {
+		// Exclude filesystem types that aren't relevant for monitoring
+		fs_types_exclude = "^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|tmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$"
+		// Exclude mount points that aren't relevant for monitoring
+		mount_points_exclude = "^/(dev|proc|run/credentials/.+|sys|var/lib/docker/.+)($|/)"
+		// Timeout for filesystem operations
+		mount_timeout = "5s"
+	}
+
+	netclass {
+		// Ignore virtual and container network interfaces
+		ignored_devices = "^(veth.*|cali.*|[a-f0-9]{15})$"
+	}
+
+	netdev {
+		// Exclude virtual and container network interfaces from device metrics
+		device_exclude = "^(veth.*|cali.*|[a-f0-9]{15})$"
+	}
+}
+
+// Define how to scrape metrics from the node_exporter
+prometheus.scrape "integrations_node_exporter" {
+	scrape_interval = "15s"
+	// Use the targets with labels from the discovery.relabel component
+	targets = discovery.relabel.integrations_node_exporter.output
+	// Send the scraped metrics to the relabeling component
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+// Collect logs from systemd journal for node_exporter integration
+loki.source.journal "logs_integrations_integrations_node_exporter_journal_scrape" {
+	// Only collect logs from the last 24 hours
+	max_age = "24h0m0s"
+	// Apply relabeling rules to the logs
+	relabel_rules = discovery.relabel.logs_integrations_integrations_node_exporter_journal_scrape.rules
+	// Send logs to the local Loki instance
+	forward_to = [loki.write.default.receiver]
+}
+
+// Define which log files to collect for node_exporter
+local.file_match "logs_integrations_integrations_node_exporter_direct_scrape" {
+	path_targets = [{
+		// Target localhost for log collection
+		__address__ = "localhost",
+		// Collect standard system logs
+		__path__ = "/var/log/{syslog,messages,*.log}",
+		// Add instance label with hostname
+		instance = constants.hostname,
+		// Add job label for logs
+		job = "integrations/node_exporter",
+	}]
+}
+
+// Define relabeling rules for systemd journal logs
+discovery.relabel "logs_integrations_integrations_node_exporter_journal_scrape" {
+	targets = []
+
+	rule {
+		// Extract systemd unit information into a label
+		source_labels = ["__journal__systemd_unit"]
+		target_label  = "unit"
+	}
+
+	rule {
+		// Extract boot ID information into a label
+		source_labels = ["__journal__boot_id"]
+		target_label  = "boot_id"
+	}
+
+	rule {
+		// Extract transport information into a label
+		source_labels = ["__journal__transport"]
+		target_label  = "transport"
+	}
+
+	rule {
+		// Extract log priority into a level label
+		source_labels = ["__journal_priority_keyword"]
+		target_label  = "level"
+	}
+}
+
+// Collect logs from files for node_exporter
+loki.source.file "logs_integrations_integrations_node_exporter_direct_scrape" {
+	// Use targets defined in local.file_match
+	targets = local.file_match.logs_integrations_integrations_node_exporter_direct_scrape.targets
+	// Send logs to the local Loki instance
+	forward_to = [loki.write.default.receiver]
+}
+
+//--------------------syslogs-nodeexporter-----------
+
 //------------------apache----------------------  https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-apache-http
 
 prometheus.exporter.self "integrations_apache_http_histogram" { }
@@ -92,7 +207,7 @@ loki.source.file "logs_integrations_integrations_apache_access" {
 local.file_match "logs_integrations_integrations_apache_error" {
 	path_targets = [{
 		__address__ = "localhost",
-		__path__    = "/var/log/apache2/error.log",
+		__path__    = "/mnt/log/apache2/error.log",
 		instance    = constants.hostname,
 		// instance    = "apache_web_server",
 		job = "apache_http",
@@ -130,13 +245,22 @@ loki.source.file "logs_integrations_integrations_apache_error" {
 local.file_match "logs_integrations_integrations_apache_access" {
 	path_targets = [{
 		__address__ = "localhost",
-		__path__    = "/var/log/apache2/access.log",
+		__path__    = "/mnt/log/apache2/access.log",
 		instance    = constants.hostname,
 		// instance    = "apache_web_server",
 		job = "apache_http",
 	}]
 }
 //------------------ Apache end -----------------------------------
+
+//------------------ docker exporter ----------------------------------------+
+
+prometheus.scrape "docker_state_exporter" {
+	targets = [
+		{"__address__" = "docker_state_exporter:8080", "job" = "docker_state"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
 
 //------------------ docker logs ----------------------------------------+
 
@@ -214,7 +338,7 @@ loki.source.docker "default" {
 //------------------ Modsecurity logs -----------------------------------
 loki.source.file "modsecurity_logs" {
 	targets = [
-		{__path__ = "/var/log/modsec/modsec_audit.log",
+		{__path__ = "/mnt/log/modsec/modsec_audit.log",
 				job      = "modsecurity",
 				app      = "modsecurity",
 				env      = "env",
@@ -317,7 +441,7 @@ loki.process "modsecurity_logs" {
 
 loki.source.file "fail2ban" {
 	targets = [
-		{__path__ = "/var/log/fail2ban/fail2ban.log",
+		{__path__ = "/mnt/log/fail2ban/fail2ban.log",
 				job = "fail2ban"},
 	]
 	forward_to = [loki.process.fail2ban.receiver]
@@ -407,6 +531,7 @@ loki.process "fail2ban" {
 		}
 	}
 }
+
 // ----------------- internal logs -----------------------------------
 logging {
 	// level    = "debug"

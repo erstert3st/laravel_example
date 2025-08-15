@@ -1,6 +1,6 @@
 services:
   mimir:
-    image: grafana/mimir:2.14.3
+    image: grafana/mimir:2.17.0
     restart: on-failure
     container_name: mimir
     command:
@@ -11,9 +11,15 @@ services:
       - "9009:9009"
 
   loki:
-    image: grafana/loki:3.4.1
+    image: grafana/loki:3.5.3
     container_name: loki
     restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3100/ready || exit 1"]
+      interval: 30s
+      start_period: 25s
+      timeout: 10s
+      retries: 4
     ports:
       - "3100:3100"
     volumes:
@@ -21,9 +27,15 @@ services:
     #command: -config.file=/etc/loki/local-config.yaml
 
   tempo:
-    image: grafana/tempo:2.7.0
+    image: grafana/tempo:2.8.2
     container_name: tempo
     restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3100/ready"]
+      interval: 30s
+      start_period: 25s
+      timeout: 10s
+      retries: 4
     command:
       - "-config.file=/etc/tempo-config/tempo.yaml"
       - "-storage.trace.backend=local"                  # tell tempo where to permanently put traces
@@ -38,7 +50,7 @@ services:
       - "4317:4317"
 
   pyroscope:
-    image: grafana/pyroscope:1.5.0
+    image: grafana/pyroscope:1.14.0
     container_name: pyroscope
     restart: on-failure
     ports:

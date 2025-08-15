@@ -29,10 +29,11 @@ services:
     container_name: archi
     depends_on:
       - modsecurity-waf
+      - apache
     entrypoint: ["sleep", "infinity"]
     volumes:
-      - ../../.data/apache:/testing/apache
-      - ../../.data/fail2ban:/testing/fail2ban
+      - apache-logs:/testing/apache
+      - fail2ban-logs:/testing/fail2ban
       - modsec-logs:/testing/modsec
       - geoip:/testing/geoip
 
@@ -43,6 +44,9 @@ services:
     # image: lscr.io/linuxserver/fail2ban:1.1.0
     image: lscr.io/linuxserver/fail2ban:1.1.0
     container_name: fail2ban
+    depends_on:
+      - modsecurity-waf
+      - apache
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -57,7 +61,7 @@ services:
       # - F2B_MAX_RETRY=3
     volumes:
       - ./config/fail2ban:/config
-      - ../../.data/apache:/remotelogs/apache2:ro
+      - apache-logs:/remotelogs/apache2:ro
       - modsec-logs:/remotelogs/modsec:ro
-      - ../../.data/fail2ban:/config/log/fail2ban
+      - fail2ban-logs:/config/log/fail2ban
       - /var/log:/var/log:ro # not needed for now

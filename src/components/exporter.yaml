@@ -4,8 +4,13 @@ services:
     build:
       context: ../images/exporter-php
       dockerfile: Dockerfile
-    image: own/php-fpm_exporter:latest
+    image: local/php-fpm_exporter:latest
     container_name: phpfpmexporter
+    healthcheck:
+        test: ["CMD-SHELL", "wget -q --spider http://localhost:9253/metrics || exit 1"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
     environment:
       - PHP_FPM_SCRAPE_URI="http://apache:80/status/php-fpm"
       - PHP_FPM_LOG_LEVEL=debug
@@ -32,6 +37,11 @@ services:
     image: prom/mysqld-exporter:latest
     container_name: mysqldexporter
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:9104/metrics || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     ports:
       - "9104:9104"
     volumes:
@@ -40,5 +50,28 @@ services:
       - MYSQLD_EXPORTER_PASSWORD=XXXXXXXX
     depends_on:
       - mariadb
+  # cadvisor:
+  #   image:privileged:latest
+  #   ports:
+  #     - 1080:8080
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
 
+  docker_state_exporter:
+    image: karugaru/docker_state_exporter
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/metrics || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    container_name: docker_state_exporter
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    ports:
+      - 8085:8080
 

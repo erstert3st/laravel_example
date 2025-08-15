@@ -3,7 +3,7 @@ volumes:
   apache-logs:
   modsec-logs:
   geoip:
-  # fail2ban-logs:
+  fail2ban-logs:
 include:
   - ./grafana.yaml
   - ./databases.yaml

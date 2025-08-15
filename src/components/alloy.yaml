@@ -1,21 +1,36 @@
 services:
   alloy:
-    image: grafana/alloy:v1.5.1
     pull_policy: always
     privileged: true
     container_name: alloy
     restart: on-failure
+    build:
+      context: ../images/exporter-php
+      dockerfile: Dockerfile
+    image: local/alloy:latest
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:12345/healthy" ]
+      interval: 30s
+      start_period: 25s
+      timeout: 10s
+      retries: 4
     environment:
       REMOTE_WRITE_HOST: mimir:9009
       LOKI_HOST: loki:3100
       TEMPO_HOST: tempo:4317
       PYROSCOPE_HOST: pyroscope:4040
     depends_on:
-      - mimir
+      - apacheexporter
+      - fail2ban
       - loki
-      - tempo
-      - pyroscope
+      - mariadb
+      - mimir
       - modsecurity-waf
+      - mysqldexporter
+      - phpfpmexporter
+      - pyroscope
+      - tempo
+      - global-db
     command:
       - run
       - /etc/alloy/config.alloy
@@ -29,19 +44,21 @@ services:
       - "4318:4318"         # OTLP HTTP/protobuf
     volumes:
       - ./config/alloy:/etc/alloy
-      - ../../.data/apache:/var/log/apache2
-      # - modsec-logs:/var/log/modsec
-      - /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log:/var/log/modsec/modsec_audit.log
-      - ../../.data/fail2ban:/var/log/fail2ban
+      - apache-logs:/mnt/log/apache2
+      - modsec-logs:/mnt/log/modsec
+      - /var/log:/var/log:ro
+      # - /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log:/var/log/modsec/modsec_audit.log
+      - fail2ban-logs:/mnt/log/fail2ban
       - geoip:/geoip
-      #docker logs
-      # - /var/run/docker.sock:/var/run/docker.sock:rw
-      - /:/rootfs:ro
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /etc/machine-id:/etc/machine-id:ro
     develop:
       watch:
         - path: ./config/alloy
