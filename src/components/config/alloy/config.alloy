@@ -74,7 +74,7 @@ local.file_match "logs_integrations_integrations_node_exporter_direct_scrape" {
 		// Add instance label with hostname
 		instance = constants.hostname,
 		// Add job label for logs
-		job = "integrations/node_exporter",
+		job = "node_exporter",
 	}]
 }
 
@@ -125,7 +125,7 @@ discovery.relabel "integrations_apache_http_histogram" {
 	targets = prometheus.exporter.self.alloy.targets
 
 	rule {
-		replacement  = "integrations/apache_http"
+		replacement  = "apache_http"
 		target_label = "job"
 	}
 
@@ -154,14 +154,14 @@ discovery.relabel "integrations_apache_http" {
 
 	rule {
 		target_label = "job"
-		replacement  = "integrations/apache_http"
+		replacement  = "apache_http"
 	}
 }
 
 prometheus.scrape "integrations_apache_http" {
 	targets    = discovery.relabel.integrations_apache_http.output
 	forward_to = [prometheus.remote_write.mimir.receiver]
-	job_name   = "integrations/apache_http"
+	job_name   = "apache_http"
 }
 
 //--------------------------------------------apache access logs ------------------------------------------------------------------------------
@@ -253,15 +253,6 @@ local.file_match "logs_integrations_integrations_apache_access" {
 }
 //------------------ Apache end -----------------------------------
 
-//------------------ docker exporter ----------------------------------------+
-
-prometheus.scrape "docker_state_exporter" {
-	targets = [
-		{"__address__" = "docker_state_exporter:8080", "job" = "docker_state"},
-	]
-	forward_to = [prometheus.remote_write.mimir.receiver]
-}
-
 //------------------ docker logs ----------------------------------------+
 
 // ###############################
@@ -278,7 +269,7 @@ discovery.relabel "docker" {
 
 	rule {
 		target_label = "job"
-		replacement  = "integrations/docker"
+		replacement  = "docker"
 	}
 
 	rule {
@@ -556,23 +547,65 @@ loki.process "example" {
 
 // Collect profiles from the local running Alloy instance and forward to
 // Pyroscope.
-pyroscope.scrape "default" {
+pyroscope.scrape "alloy" {
 	targets = [
 		{"__address__" = "localhost:12345", "service_name" = "alloy"},
 	]
 	forward_to = [pyroscope.write.pyroscope.receiver]
 }
 
+prometheus.scrape "grafana" {
+	targets = [
+		{"__address__" = "grafana:3000", "job" = "grafana"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "mimir" {
+	targets = [
+		{"__address__" = "mimir:9009", "job" = "loki"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "tempo" {
+	targets = [
+		{"__address__" = "tempo:3200", "job" = "loki"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "loki" {
+	targets = [
+		{"__address__" = "loki:3100", "job" = "loki"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "pyroscope" {
+	targets = [
+		{"__address__" = "pyroscope:4040", "job" = "pyroscope"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.scrape "docker_state_exporter" {
+	targets = [
+		{"__address__" = "docker_state_exporter:8080", "job" = "docker_state"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
 prometheus.scrape "mysqldexporter" {
 	targets = [
-		{"__address__" = "mysqldexporter:9104", "job" = "mysql"},
+		{"__address__" = "mysqldexporter:9104", "job" = "mysqlex"},
 	]
 	forward_to = [prometheus.remote_write.mimir.receiver]
 }
 
 prometheus.scrape "apacheexporter" {
 	targets = [
-		{"__address__" = "apacheexporter:9117", "job" = "apache"},
+		{"__address__" = "apacheexporter:9117", "job" = "apacheex"},
 	]
 	forward_to = [prometheus.remote_write.mimir.receiver]
 }
@@ -581,7 +614,7 @@ prometheus.scrape "phpfpmexporter" {
 	targets = [
 		{__address__ = "phpfpmexporter:9253",
 				__metrics_path__ = "/metrics",
-				"job"            = "phpfpm",
+				"job"            = "phpfpmex",
 		},
 	]
 
@@ -642,7 +675,7 @@ loki.relabel "alloy_logs" {
 
 	rule {
 		target_label = "job"
-		replacement  = "integrations/self"
+		replacement  = "alloy"
 	}
 
 	forward_to = [loki.write.default.receiver]

@@ -5,7 +5,7 @@ services:
     container_name: alloy
     restart: on-failure
     build:
-      context: ../images/exporter-php
+      context: ../images/alloy
       dockerfile: Dockerfile
     image: local/alloy:latest
     healthcheck:
@@ -37,7 +37,6 @@ services:
       - --storage.path=/var/lib/alloy/data
       - --server.http.listen-addr=0.0.0.0:12345
       - --stability.level=experimental
-      # - --enable-feature=live-debugging,wasm,otlp-http,profiling,remote-config,component-reload,tempo-traces,fuzz-testing
     ports:
       - "12345:12345"
       - "5317:4317"         # OTLP gRPC

@@ -47,9 +47,12 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [~] add loki logs
 - [~] add alloy logs
 - [~] add mimir logs
-- [ ] docker prometheus exporter 
+- [x] docker prometheus exporter 
 - [~] docker monitoring
 - [x] docker service discovery
+- [x] prometheus scrape all
+- [] tempo scrape all
+- [] pyro scrape all
 - [ ] switch to podman  
-
+- [ ] fix app(integrations/) 
 ~~add optional saving to git~~

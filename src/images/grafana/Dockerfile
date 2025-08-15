@@ -1,0 +1,5 @@
+FROM grafana/grafana:latest
+
+RUN grafana-cli plugins install grafana-clock-panel \
+    && grafana-cli plugins install grafana-piechart-panel \
+    && grafana-cli plugins install vertamedia-clickhouse-datasource
