@@ -63,3 +63,7 @@ yarn-error.log
 !/src/components/config/fail2ban/**/*.local
 !/src/components/config/fail2ban/**/*.md
 
+src/images/debug/*
+src/images/web/*
+src/components/web/*
+src/components/web/laravel-opentelemetry-demo/bootstrap/cache/.gitignore
