@@ -1,0 +1,63 @@
+services:
+  apache:
+    image: myphp:8.4-fpm-apache5 #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    # image: serversideup/php:8.4-fpm-apache #https://serversideup.net/open-source/docker-php/docs/getting-started/these-images-vs-others
+    restart: on-failure
+    container_name: apache
+    # command: [""]
+    volumes:
+      - ./config/apache/http.conf:/etc/apache2/custom.d/custom.conf
+      #- ./config/apache/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - apache-logs:/var/log/apache2
+    develop:
+      watch:
+        - path: ./config/apache/http.conf
+          action: restart
+    ports:
+      - "8080:80"
+      - "9000:9000" # move to seperate network 
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/server-status" ]
+      interval: 30s
+      start_period: 25s
+      timeout: 10s
+      retries: 4
+    # env_file:
+    environment:
+      - DEBUG=1
+      - DEFAULT_LOG_PATH=/var/log/apache2/default.log
+      - LOG_OUTPUT_LEVEL=INFO
+      - APACHE_ACCESS_LOG=/var/log/apache2/access.log
+      - APACHE_ERROR_LOG=/var/log/apache2/error.log
+      - APACHE_LOG_LEVEL=INFO
+      - SMTP_LOG=/var/log/smtp.log
+      - PHP_ACCESS_LOG=/var/log/apache2/php-fpm-access.log
+      - PHP_ERROR_LOG=/var/log/apache2/php-fpm.error.log
+      - PHP_FASTCGI_LOGGING=Off
+      - PHP_LOG_LEVEL=notice
+      - PHP_MAIL_LOG=/var/log/apache2/php-mail.log
+      - PHP_OPCACHE_ERROR_LOG=/var/log/apache2/php-fpm.opcache.log
+      - PHP_SLOWLOG=/var/log/apache2/php-fpm.slow.log
+      - PHP_SYSLOG_FACILITY=syslog
+      - PHP_LISTEN="0.0.0.0:9000" 
+      - PHP_LISTEN_GROUP=""
+      - PHP_LISTEN_OWNER=""
+      - PHP_LISTEN_MODE=""
+      # - PHP_LISTEN_GROUP=""
+      # - APACHE_STATUS_URL=http://localhost:8080/server-status?auto  
+    #dockerdocker run -v /
+  ################  FPM  ###############################  FPM  #########################  
+  # fpm:
+  #   image: serversideup/php:8.4-fpm-alpine
+  #   container_name: fpm
+  #   volumes:
+  #     - ./web/hello/:/var/www/html
+  #     - ../../.data/php-fpm:/var/log/php-fpm
+  #   ports:
+  #     - "9000:9000"
+  #   healthcheck:
+  #     test: [ "CMD", "curl", "-f", "http://localhost:9000/status/php-fpm" ]
+  #     interval: 1s
+  #     start_period: 10s
+  #     timeout: 10s
+  #     retries: 5

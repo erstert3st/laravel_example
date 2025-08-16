@@ -4,7 +4,7 @@ services:
     build:
       context: ../images/exporter-php
       dockerfile: Dockerfile
-    image: local/php-fpm_exporter:latest
+    image: localhost/php-fpm_exporter:latest
     container_name: phpfpmexporter
     healthcheck:
         test: ["CMD-SHELL", "wget -q --spider http://localhost:9253/metrics || exit 1"]
@@ -70,7 +70,7 @@ services:
     container_name: docker_state_exporter
     volumes:
       - type: bind
-        source: /var/run/docker.sock
+        source: /run/user/1001/podman/podman.sock
         target: /var/run/docker.sock
     ports:
       - 8085:8080

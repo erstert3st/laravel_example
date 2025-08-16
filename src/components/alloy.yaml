@@ -1,13 +1,13 @@
 services:
   alloy:
-    pull_policy: always
-    privileged: true
+    # pull_policy: always
+    # privileged: false
     container_name: alloy
     restart: on-failure
     build:
       context: ../images/alloy
       dockerfile: Dockerfile
-    image: local/alloy:latest
+    image: myalloy_podman:latest
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:12345/healthy" ]
       interval: 30s
@@ -49,7 +49,7 @@ services:
       # - /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log:/var/log/modsec/modsec_audit.log
       - fail2ban-logs:/mnt/log/fail2ban
       - geoip:/geoip
-      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /run/user/1001/podman/podman.sock:/var/run/docker.sock:rw
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro

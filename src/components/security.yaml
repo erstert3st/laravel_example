@@ -18,24 +18,24 @@ services:
     volumes:
       - modsec-logs:/var/log
     ports:
-      - "80:80"
-      - "81:8080"
+      - "7080:80"
+      - "7081:8080"
     depends_on:
       - apache
 
   #################  Testing  ################################  Testing  #########################
-  archi:
-    image: local/archi:latest
-    container_name: archi
-    depends_on:
-      - modsecurity-waf
-      - apache
-    entrypoint: ["sleep", "infinity"]
-    volumes:
-      - apache-logs:/testing/apache
-      - fail2ban-logs:/testing/fail2ban
-      - modsec-logs:/testing/modsec
-      - geoip:/testing/geoip
+  # archi:
+  #   image: local/archi:latest
+  #   container_name: archi
+  #   depends_on:
+  #     - modsecurity-waf
+  #     - apache
+  #   entrypoint: ["sleep", "infinity"]
+  #   volumes:
+  #     - apache-logs:/testing/apache
+  #     - fail2ban-logs:/testing/fail2ban
+  #     - modsec-logs:/testing/modsec
+  #     - geoip:/testing/geoip
 
   ################ Fail2Ban  ################################  Fail2Ban  #########################   https://hub.docker.com/r/linuxserver/fail2ban
   #alternative with more downloads https://github.com/crazy-max/docker-fail2ban <- more downloads!

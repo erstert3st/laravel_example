@@ -4,6 +4,7 @@ volumes:
   modsec-logs:
   geoip:
   fail2ban-logs:
+  mariadb-data:
 include:
   - ./grafana.yaml
   - ./databases.yaml
