@@ -1,0 +1,154 @@
+livedebugging {
+	enabled = true
+}
+
+//------------------ docker logs ----------------------------------------+
+
+// ###############################
+// #### Metrics Configuration ####
+// ###############################
+
+// Host Cadvisor on the Docker socket to expose container metrics.
+prometheus.exporter.cadvisor "docker" {
+	docker_only = true
+}
+
+discovery.relabel "docker" {
+	targets = prometheus.exporter.cadvisor.docker.targets
+
+	rule {
+		target_label = "job"
+		replacement  = "docker"
+	}
+
+	rule {
+		target_label = "instance"
+		replacement  = constants.hostname
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "service_name"
+	}
+}
+
+// Configure a prometheus.scrape component to collect cadvisor metrics.
+prometheus.scrape "scraper" {
+	targets    = discovery.relabel.docker.output
+	forward_to = [prometheus.remote_write.mimir.receiver]
+
+	scrape_interval = "10s"
+}
+
+// ###############################
+// #### Logging Configuration ####
+// ###############################
+
+// Discover Docker containers and extract metadata.
+discovery.docker "linux" {
+	host = "unix:///var/run/docker.sock"
+}
+
+// Define a relabeling rule to create a service name from the container name.
+discovery.relabel "logs_integrations_docker" {
+	targets = []
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container_name"
+	}
+
+	rule {
+		target_label = "instance"
+		replacement  = constants.hostname
+	}
+}
+
+// Configure a loki.source.docker component to collect logs from Docker containers.
+loki.source.docker "default" {
+	host          = "unix:///var/run/docker.sock"
+	targets       = discovery.docker.linux.targets
+	labels        = {"platform" = "docker"}
+	relabel_rules = discovery.relabel.logs_integrations_docker.rules
+	forward_to    = [loki.write.default.receiver]
+}
+
+// ----------------- internal logs -----------------------------------
+logging {
+	// level    = "debug"
+	level    = "info"
+	write_to = [loki.process.example.receiver]
+}
+
+loki.process "example" {
+	forward_to = [loki.relabel.alloy_logs.receiver]
+
+	stage.labels {
+		values = {
+			version = string.format("Hello%s", "1.0.0"),
+		}
+	}
+}
+// ----------------- internal logs end -----------------------------------
+
+// ----------------- scraper -----------------------------------
+// Collect metrics from the local running Alloy instance and forward to
+// Prometheus.
+
+prometheus.scrape "docker_state_exporter" {
+	targets = [
+		{"__address__" = "docker_state_exporter:8080", "job" = "docker_state"},
+	]
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+prometheus.exporter.self "alloy" { }
+
+prometheus.scrape "alloy" {
+	targets    = prometheus.exporter.self.alloy.targets
+	forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+// ----------------- Alloy logs -----------------------------------
+loki.relabel "alloy_logs" {
+	rule {
+		target_label = "instance"
+		replacement  = string.format("version%s", "1.0.0")
+	}
+
+	rule {
+		target_label = "job"
+		replacement  = "alloy"
+	}
+
+	forward_to = [loki.write.default.receiver]
+}
+
+prometheus.remote_write "mimir" {
+	endpoint {
+		url = string.format(
+			"http://%s/api/v1/push",
+			coalesce(sys.env("REMOTE_WRITE_HOST"), "localhost:9009"),
+		)
+	}
+}
+
+loki.write "default" {
+	endpoint {
+		url = string.format(
+			"http://%s/loki/api/v1/push",
+			coalesce(sys.env("LOKI_HOST"), "localhost:3100"),
+		)
+	}
+}
+
+pyroscope.write "pyroscope" {
+	endpoint {
+		url = string.format(
+			"http://%s",
+			coalesce(sys.env("PYROSCOPE_HOST"), "localhost:4040"),
+		)
+	}
+}

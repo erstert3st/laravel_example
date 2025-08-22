@@ -1,7 +1,7 @@
 services:
   alloy:
     pull_policy: always
-    privileged: true
+    privileged: false
     container_name: alloy
     restart: on-failure
     build:
@@ -45,23 +45,76 @@ services:
       - ./config/alloy:/etc/alloy
       - apache-logs:/mnt/log/apache2
       - modsec-logs:/mnt/log/modsec
-      - /var/log:/var/log:ro
-      # - /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log:/var/log/modsec/modsec_audit.log
-      - fail2ban-logs:/mnt/log/fail2ban
       - geoip:/geoip
-      - /var/run/docker.sock:/var/run/docker.sock:rw
-      - /var/run:/var/run:rw
+      - fail2ban-logs:/mnt/log/fail2ban
+      - /var/log:/var/log:ro
       - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
       - /:/rootfs:ro
       - /etc/machine-id:/etc/machine-id:ro
+      - /proc:/host/proc:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      # - /sys:/host/sys:ro
+      # - /var/run:/var/run:rw
+      # - /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log:/var/log/modsec/modsec_audit.log
+      # - /var/run/docker.sock:/var/run/docker.sock:rw
+      # - /dev/disk/:/dev/disk:ro
     develop:
       watch:
         - path: ./config/alloy
           action: restart
+
+  alloy-docker:
+    privileged: true
+    container_name: alloy-docker
+    restart: on-failure
+    build:
+      context: ../images/alloy
+      dockerfile: Dockerfile
+    image: local/alloy:latest
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:12345/healthy" ]
+      interval: 30s
+      start_period: 25s
+      timeout: 10s
+      retries: 4
+    environment:
+      REMOTE_WRITE_HOST: mimir:9009
+      LOKI_HOST: loki:3100
+      TEMPO_HOST: tempo:4317
+      PYROSCOPE_HOST: pyroscope:4040
+      ALLOY_DEPLOY_MODE: docker
+    depends_on:
+      - loki
+      - mimir
+      - pyroscope
+      - tempo
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --stability.level=experimental
+    ports:
+      - "12346:12345"
+      - "7317:4317"         # OTLP gRPC
+      - "6318:4318"         # OTLP HTTP/protobuf
+    volumes:
+      - ./config/alloy-docker:/etc/alloy
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /dev/disk/:/dev/disk:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /proc:/rootproc:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      # - /etc/machine-id:/etc/machine-id:ro
+      # - /proc:/host/proc:ro
+    develop:
+      watch:
+        - path: ./config/alloy
+          action: restart
+
 
 # /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log
 

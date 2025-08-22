@@ -49,14 +49,14 @@ services:
   #     - /var/run:/var/run:rw
   #     - /sys:/sys:ro
   #     - /var/lib/docker/:/var/lib/docker:ro
-
-  docker_state_exporter:
-    image: karugaru/docker_state_exporter
-    container_name: docker_state_exporter
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-    ports:
-      - 8085:8080
+# #TODO
+#   docker_state_exporter:
+#     image: karugaru/docker_state_exporter
+#     container_name: docker_state_exporter
+#     volumes:
+#       - type: bind
+#         source: /var/run/docker.sock
+#         target: /var/run/docker.sock
+#     ports:
+#       - 8085:8080
 

@@ -314,7 +314,7 @@
             },
             "direction": "backward",
             "editorMode": "builder",
-            "expr": "count(rate({job=\"$job\"} |= `Ban` [15m]))",
+            "expr": "count(rate({job=\"$job\"} |= `Ban` [$__auto]))",
             "queryType": "range",
             "refId": "A"
           }
@@ -598,15 +598,18 @@
             "id": "organize",
             "options": {
               "excludeByName": {
+                "Time": false,
                 "ban": true,
                 "cumulative sum(unban)": true,
-                "sum ban": true,
+                "sum ban": false,
                 "sum unban": true,
                 "unban": true
               },
               "includeByName": {},
               "indexByName": {},
-              "renameByName": {}
+              "renameByName": {
+                "sum ban": ""
+              }
             }
           }
         ],
@@ -1239,7 +1242,7 @@
       ]
     },
     "time": {
-      "from": "now-12h",
+      "from": "now-15m",
       "to": "now"
     },
     "timepicker": {},

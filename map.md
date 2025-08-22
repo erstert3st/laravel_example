@@ -17,8 +17,9 @@
 
 ### usefull links
 - devContainer        → http://localhost:8000
-- alloy:12345         → http://localhost:1234
-- apache:80         → http://localhost:8080
+- alloy:12345         → http://localhost:12345
+- alloy-docker:12346  → http://localhost:12346
+- apache:80           → http://localhost:8080
 - modsecurity:8080    → http://localhost:81
 - grafana:3000        → http://localhost:3000
 - pyroscope:4040      → http://localhost:4040

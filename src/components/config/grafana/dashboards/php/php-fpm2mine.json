@@ -2,7 +2,7 @@
   "apiVersion": "dashboard.grafana.app/v1beta1",
   "kind": "Dashboard",
   "metadata": {
-    "name": "000000003"
+    "name": "000000004"
   },
   "spec": {
     "annotations": {
@@ -116,7 +116,7 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "editorMode": "builder",
+            "editorMode": "code",
             "expr": "phpfpm_up",
             "format": "time_series",
             "intervalFactor": 2,
@@ -132,7 +132,8 @@
       },
       {
         "datasource": {
-          "uid": "$DS_PROMETHEUS"
+          "type": "prometheus",
+          "uid": "PAE45454D0EDB9216"
         },
         "fieldConfig": {
           "defaults": {
@@ -216,14 +217,17 @@
         "targets": [
           {
             "datasource": {
-              "uid": "$DS_PROMETHEUS"
+              "type": "prometheus",
+              "uid": "PAE45454D0EDB9216"
             },
-            "expr": "time()-(php_fpm_start_time_seconds{instance=~\"^$Host$\", socket_path=~\"$Socket$\"})",
+            "editorMode": "code",
+            "expr": "time()-(phpfpm_start_since) ",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
             "legendFormat": "Uptime",
             "metric": "php_fpm_start_time_seconds",
+            "range": true,
             "refId": "A",
             "step": 1
           }
@@ -233,11 +237,12 @@
       },
       {
         "datasource": {
-          "uid": "$DS_PROMETHEUS"
+          "type": "prometheus",
+          "uid": "PAE45454D0EDB9216"
         },
         "fieldConfig": {
           "defaults": {
-            "decimals": 2,
+            "decimals": 1,
             "mappings": [
               {
                 "options": {
@@ -301,14 +306,17 @@
         "targets": [
           {
             "datasource": {
-              "uid": "$DS_PROMETHEUS"
+              "type": "prometheus",
+              "uid": "PAE45454D0EDB9216"
             },
-            "expr": "( php_fpm_active_processes{instance=~\"^$Host$\", socket_path=~\"$Socket$\"} / php_fpm_max_active_processes{instance=~\"^$Host$\", socket_path=~\"$Socket$\"} )",
+            "editorMode": "builder",
+            "expr": "phpfpm_start_since / phpfpm_max_active_processes",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
             "legendFormat": "",
             "metric": "php_fpm_max_active_processes",
+            "range": true,
             "refId": "A",
             "step": 20
           }
@@ -417,11 +425,13 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "expr": "rate(php_fpm_accepted_connections_total{instance=~\"^$Host$\", socket_path=~\"$Socket$\"}[$Interval])",
+            "editorMode": "code",
+            "expr": "rate(phpfpm_accepted_connections[$Interval])",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
             "legendFormat": "Accepted Connections Rate",
+            "range": true,
             "refId": "A",
             "step": 2
           }
@@ -516,12 +526,14 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "expr": "php_fpm_max_active_processes{instance=~\"^$Host$\", socket_path=~\"$Socket$\"}",
+            "editorMode": "code",
+            "expr": "phpfpm_max_active_processes",
             "format": "time_series",
             "hide": false,
             "interval": "",
             "intervalFactor": 2,
             "legendFormat": "Max Active",
+            "range": true,
             "refId": "A",
             "step": 2
           },
@@ -529,12 +541,15 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "expr": "php_fpm_active_processes{instance=~\"^$Host$\", socket_path=~\"$Socket$\"}",
+            "editorMode": "code",
+            "expr": "phpfpm_active_processes",
             "format": "time_series",
+            "hide": false,
             "interval": "",
             "intervalFactor": 2,
             "legendFormat": "Active",
             "metric": "php_fpm_active_processes",
+            "range": true,
             "refId": "B",
             "step": 2
           },
@@ -542,12 +557,15 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "expr": "php_fpm_idle_processes{instance=~\"^$Host$\", socket_path=~\"$Socket$\"}",
+            "editorMode": "code",
+            "expr": "phpfpm_idle_processes",
             "format": "time_series",
+            "hide": false,
             "interval": "",
             "intervalFactor": 2,
             "legendFormat": "Idle",
             "metric": "php_fpm_idle_processes",
+            "range": true,
             "refId": "C",
             "step": 2
           },
@@ -555,17 +573,19 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "expr": "php_fpm_max_children_reached{instance=~\"^$Host$\", socket_path=~\"$Socket$\"}",
+            "editorMode": "code",
+            "expr": "phpfpm_max_children_reached",
             "format": "time_series",
-            "hide": true,
+            "hide": false,
             "intervalFactor": 2,
             "legendFormat": "Max Children",
             "metric": "php_fpm_max_children_reached",
+            "range": true,
             "refId": "D",
             "step": 2
           }
         ],
-        "title": "Processes",
+        "title": "Processes TODO",
         "type": "timeseries"
       },
       {
@@ -670,7 +690,8 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "expr": "rate(php_fpm_slow_requests{instance=~\"^$Host$\", socket_path=~\"$Socket$\"}[$Interval])",
+            "editorMode": "code",
+            "expr": "rate(phpfpm_slow_requests[$Interval])",
             "format": "time_series",
             "instant": false,
             "interval": "",
@@ -771,11 +792,14 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "expr": "php_fpm_listen_queue{instance=~\"^$Host$\"}",
+            "editorMode": "code",
+            "expr": "phpfpm_listen_queue",
             "format": "time_series",
+            "hide": false,
             "interval": "",
             "intervalFactor": 2,
             "legendFormat": "Queue",
+            "range": true,
             "refId": "A",
             "step": 2
           },
@@ -783,11 +807,14 @@
             "datasource": {
               "uid": "$DS_PROMETHEUS"
             },
-            "expr": "php_fpm_listen_queue_length{instance=~\"^$Host$\", socket_path=~\"$Socket$\"}",
+            "editorMode": "code",
+            "expr": "phpfpm_listen_queue_length",
             "format": "time_series",
+            "hide": false,
             "intervalFactor": 2,
             "legendFormat": "Queue Length",
             "metric": "php_fpm_listen_queue_length",
+            "range": true,
             "refId": "B",
             "step": 2
           }
@@ -897,6 +924,6 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "PHP-FPM 2"
+    "title": "PHP-FPM 2 mine"
   }
 }

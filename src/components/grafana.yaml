@@ -29,6 +29,7 @@ services:
       retries: 5
 
   global-db:
+    pull_policy: always
     image: observabilitystack/geoip-api:latest
     container_name: global-db
     restart: no
