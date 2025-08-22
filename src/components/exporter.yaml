@@ -6,11 +6,6 @@ services:
       dockerfile: Dockerfile
     image: local/php-fpm_exporter:latest
     container_name: phpfpmexporter
-    healthcheck:
-        test: ["CMD-SHELL", "wget -q --spider http://localhost:9253/metrics || exit 1"]
-        interval: 30s
-        timeout: 10s
-        retries: 3
     environment:
       - PHP_FPM_SCRAPE_URI="http://apache:80/status/php-fpm"
       - PHP_FPM_LOG_LEVEL=debug
@@ -37,11 +32,6 @@ services:
     image: prom/mysqld-exporter:latest
     container_name: mysqldexporter
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:9104/metrics || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     ports:
       - "9104:9104"
     volumes:
@@ -62,11 +52,6 @@ services:
 
   docker_state_exporter:
     image: karugaru/docker_state_exporter
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/metrics || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     container_name: docker_state_exporter
     volumes:
       - type: bind
