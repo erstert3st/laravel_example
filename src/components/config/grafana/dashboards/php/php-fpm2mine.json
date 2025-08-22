@@ -309,8 +309,8 @@
               "type": "prometheus",
               "uid": "PAE45454D0EDB9216"
             },
-            "editorMode": "builder",
-            "expr": "phpfpm_start_since / phpfpm_max_active_processes",
+            "editorMode": "code",
+            "expr": "phpfpm_active_processes  / phpfpm_max_active_processes",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -321,7 +321,7 @@
             "step": 20
           }
         ],
-        "title": "Workers  Usage",
+        "title": "Workers  Usage todo",
         "type": "stat"
       },
       {
@@ -426,7 +426,7 @@
               "uid": "$DS_PROMETHEUS"
             },
             "editorMode": "code",
-            "expr": "rate(phpfpm_accepted_connections[$Interval])",
+            "expr": "rate(phpfpm_accepted_connections[$__rate_interval])",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -691,7 +691,7 @@
               "uid": "$DS_PROMETHEUS"
             },
             "editorMode": "code",
-            "expr": "rate(phpfpm_slow_requests[$Interval])",
+            "expr": "rate(phpfpm_slow_requests[$__rate_interval])",
             "format": "time_series",
             "instant": false,
             "interval": "",
@@ -860,47 +860,6 @@
           "type": "datasource"
         },
         {
-          "auto": false,
-          "auto_count": 5,
-          "auto_min": "30s",
-          "current": {
-            "text": "5m",
-            "value": "5m"
-          },
-          "label": "Time Interval",
-          "name": "Interval",
-          "options": [
-            {
-              "selected": false,
-              "text": "1m",
-              "value": "1m"
-            },
-            {
-              "selected": true,
-              "text": "5m",
-              "value": "5m"
-            },
-            {
-              "selected": false,
-              "text": "10m",
-              "value": "10m"
-            },
-            {
-              "selected": false,
-              "text": "30m",
-              "value": "30m"
-            },
-            {
-              "selected": false,
-              "text": "1h",
-              "value": "1h"
-            }
-          ],
-          "query": "1m,5m,10m,30m,1h",
-          "refresh": 2,
-          "type": "interval"
-        },
-        {
           "current": {
             "text": "",
             "value": ""
@@ -919,7 +878,7 @@
       ]
     },
     "time": {
-      "from": "now-12h",
+      "from": "now-5m",
       "to": "now"
     },
     "timepicker": {},
