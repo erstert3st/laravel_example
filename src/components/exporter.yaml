@@ -12,6 +12,8 @@ services:
       - PHP_FPM_FIX_PROCESS_COUNT=true
     ports:
       - "9253:9253"
+    networks:
+      - website-network 
     depends_on:
       - apache
 
@@ -34,6 +36,8 @@ services:
     restart: unless-stopped
     ports:
       - "9104:9104"
+    networks:
+      - website-network 
     volumes:
       - ./config/mysql_exporter/.my.cnf:/.my.cnf
     environment:

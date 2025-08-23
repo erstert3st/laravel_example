@@ -15,6 +15,8 @@ services:
       #MODSEC_AUDIT_LOG: /usr/local/apache2/logs
       MODSEC_AUDIT_LOG: /var/log/modsec_audit.log
       MODSEC_AUDIT_ENGINE: on
+    networks:
+      - website-network
     volumes:
       - modsec-logs:/var/log
     ports:
@@ -31,6 +33,8 @@ services:
       - modsecurity-waf
       - apache
     entrypoint: ["sleep", "infinity"]
+    networks:
+      - website-network
     volumes:
       - apache-logs:/testing/apache
       - fail2ban-logs:/testing/fail2ban
@@ -51,6 +55,8 @@ services:
       - NET_ADMIN
       - NET_RAW
     network_mode: host
+    networks:
+      - website-network
     environment:
       - PUID=1001
       - PGID=1001

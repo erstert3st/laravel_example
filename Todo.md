@@ -63,4 +63,10 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [ ] Docker compose auf 2 projekte -> prod relevant -> AND NOT 
 - [ ] Pupetter image with scaling :D
 - [ ] Mini load balancer to get some traffic on new server for testing :D - no idea how xD
+- [ ] cronjob or compose fix -> restart ip db container daily ? or if no image is there 
+- [ ] letFailToBan really ban on host level -> recherche
+- [ ] performance what should run on 
+    - [ ] host ?
+    - [ ] DB!  
+
 ~~add optional saving to git~~

@@ -22,6 +22,8 @@ services:
       start_period: 25s
       timeout: 10s
       retries: 4
+    networks:
+      - website-network 
     # env_file:
     environment:
       - DEBUG=1

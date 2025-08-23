@@ -9,6 +9,8 @@ services:
       - ./config/mimir:/etc/mimir-config
     ports:
       - "9009:9009"
+    networks:
+      - website-network
 
   loki:
     image: grafana/loki:3.5.3
@@ -16,6 +18,8 @@ services:
     restart: on-failure
     ports:
       - "3100:3100"
+    networks:
+      - website-network
     volumes:
       - ./config/loki/loki-config.yaml:/etc/loki/local-config.yaml
     #command: -config.file=/etc/loki/local-config.yaml
@@ -36,6 +40,8 @@ services:
     ports:
       - "3200:3200"
       - "4317:4317"
+    networks:
+      - website-network
 
   pyroscope:
     image: grafana/pyroscope:1.14.0
@@ -43,18 +49,17 @@ services:
     restart: on-failure
     ports:
       - "4040:4040"
+    networks:
+      - website-network
 
-  mariadb:
-    image: mariadb:latest
-    container_name: mariadb
-    restart: on-failure
-    environment:
-      - MARIADB_ROOT_PASSWORD=root
-      - MARIADB_DATABASE=mydb
-      - MARIADB_USER=user
-      - MARIADB_PASSWORD=user
+  global-db:
+    pull_policy: always
+    image: observabilitystack/geoip-api:latest
+    container_name: global-db
+    restart: no
+    networks:
+      - website-network
+    command: >
+      sh -c "cp -f /srv/GeoLite2-City.mmdb /share/ && exit 0"
     volumes:
-      - ../../.data/mariadb_data:/var/lib/mysql
-      - ./config/mariadb/init_metric_user.sql:/docker-entrypoint-initdb.d/init_metrics.sql
-    ports:
-      - "3306:3306"
+      - geoip:/share

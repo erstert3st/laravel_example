@@ -21,6 +21,8 @@ services:
           action: restart
     ports:
       - "3000:3000"
+    networks:
+      - website-network 
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000/healthz" ]
       interval: 1s
@@ -28,15 +30,7 @@ services:
       timeout: 10s
       retries: 5
 
-  global-db:
-    pull_policy: always
-    image: observabilitystack/geoip-api:latest
-    container_name: global-db
-    restart: no
-    command: >
-      sh -c "cp -f /srv/GeoLite2-City.mmdb /share/ && exit 0"
-    volumes:
-      - geoip:/share
+
     # environment:
       # - GF_GIT_DASHBOARDS_ENABLED=true
       # - GF_GIT_DASHBOARDS_REPO_URL=https://github.com/erstert3st/laravel_example.git

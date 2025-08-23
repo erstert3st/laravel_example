@@ -1,0 +1,17 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: on-failure
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=mydb
+      - MARIADB_USER=user
+      - MARIADB_PASSWORD=user
+    volumes:
+      - ../../.data/mariadb_data:/var/lib/mysql
+      - ./config/mariadb/init_metric_user.sql:/docker-entrypoint-initdb.d/init_metrics.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - website-network 

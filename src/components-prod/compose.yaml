@@ -1,0 +1,13 @@
+name: website
+include:
+  - ./grafana.yaml
+  - ./databases.yaml
+  - ./apache.yaml
+
+volumes:
+  apache-logs:
+    external: true  # Ensure this volume is shared across projects
+
+networks:
+  website-network:
+    external: true  # Ensure this network is shared across projects

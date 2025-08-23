@@ -41,6 +41,8 @@ services:
       - "12345:12345"
       - "5317:4317"         # OTLP gRPC
       - "4318:4318"         # OTLP HTTP/protobuf
+    networks:
+      - website-network 
     volumes:
       - ./config/alloy:/etc/alloy
       - apache-logs:/mnt/log/apache2
@@ -58,6 +60,7 @@ services:
       # - /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log:/var/log/modsec/modsec_audit.log
       # - /var/run/docker.sock:/var/run/docker.sock:rw
       # - /dev/disk/:/dev/disk:ro
+
     develop:
       watch:
         - path: ./config/alloy
@@ -98,6 +101,8 @@ services:
       - "12346:12345"
       - "7317:4317"         # OTLP gRPC
       - "6318:4318"         # OTLP HTTP/protobuf
+    networks:
+      - website-network 
     volumes:
       - ./config/alloy-docker:/etc/alloy
       - /var/run/docker.sock:/var/run/docker.sock:rw

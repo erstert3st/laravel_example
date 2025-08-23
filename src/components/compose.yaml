@@ -1,14 +1,16 @@
 name: alloy-main
 volumes:
   apache-logs:
+    external: true
   modsec-logs:
   geoip:
   fail2ban-logs:
 include:
-  - ./grafana.yaml
   - ./databases.yaml
-  - ./apache.yaml
   - ./exporter.yaml
   - ./alloy.yaml
   - ./security.yaml
 
+networks:
+  website-network:
+    external: true
