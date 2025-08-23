@@ -16,15 +16,15 @@ prometheus.exporter.cadvisor "docker" {
 discovery.relabel "docker" {
 	targets = prometheus.exporter.cadvisor.docker.targets
 
-	rule {
-		target_label = "job"
-		replacement  = "docker"
-	}
+    rule {
+        target_label = "job"
+        replacement  = "docker"
+    }
 
-	rule {
-		target_label = "instance"
-		replacement  = constants.hostname
-	}
+    rule {
+        target_label = "instance"
+        replacement  = constants.hostname
+    }
 
 	rule {
 		source_labels = ["__meta_docker_container_name"]
@@ -96,13 +96,13 @@ loki.process "example" {
 // ----------------- scraper -----------------------------------
 // Collect metrics from the local running Alloy instance and forward to
 // Prometheus.
-
-prometheus.scrape "docker_state_exporter" {
-	targets = [
-		{"__address__" = "docker_state_exporter:8080", "job" = "docker_state"},
-	]
-	forward_to = [prometheus.remote_write.mimir.receiver]
-}
+// DOTO 
+// prometheus.scrape "docker_state_exporter" {
+// 	targets = [
+// 		{"__address__" = "docker_state_exporter:8080", "job" = "docker_state"},
+// 	]
+// 	forward_to = [prometheus.remote_write.mimir.receiver]
+// }
 
 prometheus.exporter.self "alloy" { }
 

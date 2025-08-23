@@ -57,4 +57,10 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [ ] fix app(integrations/) 
 - [ ] fix testing container with my dotfiles
 - [ ] fix latest alloy docker changes
+- [ ]   scrape_interval setzen ÜBERALL
+- [ ] Apache Image with prebaked Website
+- [ ] How to deploy ? -> docker regestry 0.1 downtime ?  or script -> build if exit 0 restart apache image
+- [ ] Docker compose auf 2 projekte -> prod relevant -> AND NOT 
+- [ ] Pupetter image with scaling :D
+- [ ] Mini load balancer to get some traffic on new server for testing :D - no idea how xD
 ~~add optional saving to git~~

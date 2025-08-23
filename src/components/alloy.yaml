@@ -112,9 +112,10 @@ services:
       # - /proc:/host/proc:ro
     develop:
       watch:
-        - path: ./config/alloy
+        - path: ./config/alloy-docker
           action: restart
-
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 # /home/user1/Documents/gits/laravel_example/src/components/config/modsec/modsec_audit.log
 
