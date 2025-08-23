@@ -55,4 +55,6 @@ https://blog.elhacker.net/2024/11/visualizar-registros-logs-apache-grafana-loki-
 - [] pyro scrape all
 - [ ] switch to podman  
 - [ ] fix app(integrations/) 
+- [ ] fix testing container with my dotfiles
+- [ ] fix latest alloy docker changes
 ~~add optional saving to git~~
