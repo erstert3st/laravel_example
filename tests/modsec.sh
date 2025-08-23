@@ -3,6 +3,7 @@
 # URL anpassen, falls nötig (Port, Pfad, VirtualHost, ...).
 
 url="http://localhost:81"
+#url="https://coding-freaks.com"
 
 # Hilfsfunktion für Requests
 send() {
