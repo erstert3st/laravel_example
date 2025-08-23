@@ -26,11 +26,11 @@ discovery.relabel "docker" {
         replacement  = constants.hostname
     }
 
-	rule {
-		source_labels = ["__meta_docker_container_name"]
-		regex         = "/(.*)"
-		target_label  = "service_name"
-	}
+	// rule {
+	// 	source_labels = ["__meta_docker_container_name"]
+	// 	regex         = "/(.*)"
+	// 	target_label  = "service_name"
+	// }
 }
 
 // Configure a prometheus.scrape component to collect cadvisor metrics.
