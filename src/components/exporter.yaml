@@ -31,15 +31,13 @@ services:
   mysqldexporter:
     image: prom/mysqld-exporter:latest
     container_name: mysqldexporter
-    restart: unless-stopped
     ports:
       - "9104:9104"
-    volumes:
-      - ./config/mysql_exporter/.my.cnf:/.my.cnf
-    environment:
-      - MYSQLD_EXPORTER_PASSWORD=XXXXXXXX
-    depends_on:
-      - mariadb
+    # networks:
+    #   - alloy-main_default   # shared docker network
+    extra_hosts:
+      - host.docker.internal:host-gateway  # map host IP
+
   # cadvisor:
   #   image:privileged:latest
   #   ports:

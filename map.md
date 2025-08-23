@@ -25,3 +25,6 @@
 - pyroscope:4040      → http://localhost:4040
 - apacheexporter:9117 → http://localhost:9117
 - phpfpmexporter:9253 → http://localhost:9253
+
+#FailToBan
+- fail2ban:8080      → http://localhost:8080

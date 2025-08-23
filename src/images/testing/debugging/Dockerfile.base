@@ -1,0 +1,42 @@
+
+FROM archlinux:latest AS builder
+
+RUN pacman -Syu --noconfirm --needed base-devel git sudo
+
+# User anlegen für makepkg (root darf nicht)
+RUN useradd -m user && \
+    echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Paru aus dem AUR holen, bauen und installieren
+USER user
+
+
+
+
+
+FROM archlinux:latest
+
+
+RUN pacman -Syu --noconfirm  && \
+    pacman -S --noconfirm  --needed sudo exa 7zip aspnet-runtime autoconf logcli  fish base-devel base-devel bash bash-completion bat bc bind btop bzip2 curl  fastfetch yazi  fzf git glances glow grep gzip helm htop httpie imagemagick jq k9s kinit kubectl  make man-db man-pages md-tui micro nano net-tools nmap nodejs openssh openssl openvpn   python python-pip python-virtualenv ripgrep ripgrep rsync sed tar terminus-font tmux tmuxp traceroute ttf-fira-code ttf-fira-sans ttf-jetbrains-mono ttf-liberation ttf-opensans ugrep unarchiver unarj unrar unzip vi wget which whois xarchiver xz yq zip zoxide zoxide zsh  && \
+    pacman -Scc --noconfirm && \
+    useradd -m user && \
+    chsh -s /bin/zsh user && \
+    echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+# RUN chown -R user:user /home/user && \
+#     chmod -R u+rwx /home/user
+# USER user dotnet-sdk
+####paru
+
+COPY --from=builder /usr/bin/paru /usr/bin/paru
+
+USER user
+RUN paru -S --noconfirm --needed   go-jsonnet grafana-alloy-bin jsonnet-bundler   gdu  ttf-victor-mono  flux-bin  lazydocker lazygit logiops pokemon-colorscripts-git oh-my-posh && \
+    paru -S --noconfirm --needed --nocheck kubecolor && \
+    paru -Scc --noconfirm  && \
+    paru -Qtdq --noconfirm && \
+    go clean -modcache -cache -testcache && \
+    rm -rf ~/.cache/*
+
+
+    #  sudo chsh -s /bin/zsh user && \
