@@ -2,11 +2,17 @@ session_name: laravel
 start_directory: /home/user1/Documents/gits/laravel_example
 windows:
   - focus: 'true'
-    layout: 25b7,341x62,0,0[341x28,0,0{113x28,0,0,1,93x28,114,0,2,133x28,208,0,3},341x33,0,29{249x33,0,29[249x3,0,29,4,249x29,0,33,5],91x33,250,29,6}]
+    layout: a3c8,342x62,0,0[342x23,0,0{141x23,0,0,1,54x23,142,0[54x13,142,0,2,54x9,142,14,3],82x23,197,0,4,62x23,280,0,5},342x38,0,24{250x38,0,24[250x4,0,24,6,250x4,0,29,7,250x28,0,34,8],91x38,251,24,9}]
     options: {}
     panes:
+    - shell_command: 
+        ls
     - shell_command:
-        - zsh
+        - cd /home/user1/Documents/gits/laravel_example
+        - tty-clock -s -S -c -C 4 -b -f "%d-%m-%Y"
+    - shell_command:
+        - cd /home/user1/Documents/gits/laravel_example
+        - sleep 10
     - shell_command:
         -  echo Todo.md | entr mca Todo.md --paging never
     - shell_command:
@@ -16,11 +22,22 @@ windows:
         - docker compose down --remove-orphans --volumes || true
         - echo "cleaned up docker starting new one"
         - docker compose watch
+
+    - shell_command:
+        - cd ./src/components-prod
+        - docker compose down --remove-orphans --volumes || true
+        - echo "cleaned up docker starting new one"
+        - docker compose watch
+
     - shell_command:
         - git pull 
         - cd ./src/components
         - lazydocker
-    - shell_command:
+    # - shell_command:
+    #     - git pull 
+    #     - cd ./src/components
+    #     - sleep 100
+    - focus: 'true'
+      shell_command:
         - sudo -i
-      focus: true
     window_name: Docker

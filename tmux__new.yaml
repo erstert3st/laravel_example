@@ -1,0 +1,33 @@
+session_name: laravel
+windows:
+- focus: 'true'
+  layout: a3c8,342x62,0,0[342x23,0,0{141x23,0,0,1,54x23,142,0[54x13,142,0,2,54x9,142,14,3],82x23,197,0,4,62x23,280,0,5},342x38,0,24{250x38,0,24[250x4,0,24,6,250x4,0,29,7,250x28,0,34,8],91x38,251,24,9}]
+  options: {}
+  panes:
+  - focus: 'true'
+    shell_command: cd /home/user1/Documents/gits/laravel_example
+  - shell_command:
+    - cd /home/user1/Documents/gits/laravel_example
+    - tty-clock
+  - shell_command:
+    - cd /home/user1/Documents/gits/laravel_example
+    - zsh
+  - shell_command:
+    - cd /home/user1/Documents/gits/laravel_example
+    - zsh
+  - shell_command:
+    - cd /home/user1/Documents/gits/laravel_example
+    - zsh
+  - shell_command:
+    - cd /home/user1/Documents/gits/laravel_example/src/components
+    - zsh
+  - shell_command:
+    - cd /home/user1/Documents/gits/laravel_example/src/components-prod
+    - zsh
+  - shell_command:
+    - cd /home/user1/Documents/gits/laravel_example/src/components
+    - lazydocker
+  - shell_command:
+    - cd /home/user1/Documents/gits/laravel_example
+    - zsh
+  window_name: Docker
